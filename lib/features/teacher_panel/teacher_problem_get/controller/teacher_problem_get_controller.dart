@@ -16,7 +16,7 @@ class TeacherProblemController extends GetxController {
     problemList.clear();
 
     try {
-      final data = await service.getTeacherProblems(userId);
+      final data = await service.getTeacherProblem(userId);
       problemList.assignAll(data);
     } catch (e) {
       errorMessage.value = e.toString();
