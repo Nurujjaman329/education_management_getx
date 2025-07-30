@@ -54,4 +54,25 @@ class ProblemPostBody{
     return dio.FormData.fromMap(fields);
   }
 
+  ProblemPostBody copyWith({
+  List<String>? postTypeId,
+  List<String>? subject,
+  String? topic,
+  List<String>? sClass,
+  String? description,
+  File? photo,
+  String? userId,
+}) {
+  return ProblemPostBody(
+    postTypeId: postTypeId ?? this.postTypeId,
+    subject: subject ?? this.subject,
+    topic: topic ?? this.topic,
+    sClass: sClass ?? this.sClass,
+    description: description ?? this.description,
+    photo: photo ?? this.photo,
+    userId: userId ?? this.userId,
+  );
+}
+
+
 }

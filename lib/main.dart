@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Edex App',
       debugShowCheckedModeBanner: false,
       navigatorKey: Get.key, // Add this line to fix GlobalKey issue
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.splash,
       getPages: AppPages.routes, // Changed from appPages to AppPages.routes
     );
   }

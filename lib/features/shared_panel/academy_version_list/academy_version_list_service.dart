@@ -12,7 +12,7 @@ class AcademyVersionListService {
 
   Future<List<AcademyVersionListResponseModel>> fetchVersion() async {
     try {
-      final response = await client.get("https://api.edex365.com/api/subject/s/AllSubject");
+      final response = await client.get("https://api.edex365.com/api/PostType/s/GetAllPostType");
 
       log('Subject API response: ${response.data}');
       switch (response.statusCode) {

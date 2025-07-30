@@ -6,35 +6,35 @@ import 'package:get/get.dart';
 class AllEnglishVersionClassController extends GetxController {
   final AllEnglishVersionClassService _service = AllEnglishVersionClassService();
 
-  var subjects = <AllEnglishVersionClassResponseModel>[].obs;
-  var selectedSubjectIds = <String>[].obs;
+  var englishVersions = <AllEnglishVersionClassResponseModel>[].obs;
+  var selectedEnglishVersionsIds = <String>[].obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
 
-  Future<void> loadSubjects() async {
+  Future<void> loadEnglishVersions() async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
-      final fetchedSubjects = await _service.fetchClasses();
-      subjects.assignAll(fetchedSubjects);
+      final fetchedEnglishVersions = await _service.fetchClasses();
+      englishVersions.assignAll(fetchedEnglishVersions);
     } catch (e) {
-      errorMessage.value = 'Failed to load subjects';
+      errorMessage.value = 'Failed to load English Versions';
     } finally {
       isLoading.value = false;
     }
   }
 
-  void toggleSubject(String id) {
-    if (selectedSubjectIds.contains(id)) {
-      selectedSubjectIds.remove(id);
+  void toggleEnglishVersion(String id) {
+    if (selectedEnglishVersionsIds.contains(id)) {
+      selectedEnglishVersionsIds.remove(id);
     } else {
-      selectedSubjectIds.add(id);
+      selectedEnglishVersionsIds.add(id);
     }
   }
 
   @override
   void onInit() {
     super.onInit();
-    loadSubjects();
+    loadEnglishVersions();
   }
 }

@@ -6,35 +6,35 @@ import 'package:get/get.dart';
 class AllBanglaVersionClassController extends GetxController {
   final AllBanglaVersionClassService _service = AllBanglaVersionClassService();
 
-  var subjects = <AllBanglaVersionClassResponseModel>[].obs;
-  var selectedSubjectIds = <String>[].obs;
+  var banglaClass = <AllBanglaVersionClassResponseModel>[].obs;
+  var selectedBanglaVersionIds = <String>[].obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
 
-  Future<void> loadSubjects() async {
+  Future<void> loadBanglaVersion() async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
-      final fetchedSubjects = await _service.fetchClasses();
-      subjects.assignAll(fetchedSubjects);
+      final fetchedBanglaVersions = await _service.fetchClasses();
+      banglaClass.assignAll(fetchedBanglaVersions);
     } catch (e) {
-      errorMessage.value = 'Failed to load subjects';
+      errorMessage.value = 'Failed to load Bangla Versions';
     } finally {
       isLoading.value = false;
     }
   }
 
-  void toggleSubject(String id) {
-    if (selectedSubjectIds.contains(id)) {
-      selectedSubjectIds.remove(id);
+  void toggleBanglaVersion(String id) {
+    if (selectedBanglaVersionIds.contains(id)) {
+      selectedBanglaVersionIds.remove(id);
     } else {
-      selectedSubjectIds.add(id);
+      selectedBanglaVersionIds.add(id);
     }
   }
 
   @override
   void onInit() {
     super.onInit();
-    loadSubjects();
+    loadBanglaVersion();
   }
 }

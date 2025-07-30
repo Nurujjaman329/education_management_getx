@@ -9,7 +9,7 @@ class AllEnglishVersionClassService {
 
   Future<List<AllEnglishVersionClassResponseModel>> fetchClasses() async {
     try {
-      final response = await client.get("https://api.edex365.com/api/class/s/AllClass");
+      final response = await client.get("https://api.edex365.com/api/EnglishClass/s/GetAllEnglishClass");
 
       log('Subject API response: ${response.data}');
       switch (response.statusCode) {
