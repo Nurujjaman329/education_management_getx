@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:edex_365_getx/core/error/exceptions.dart';
@@ -144,6 +145,50 @@ Future<List<TeacherProblemGetModel>> getAllSolutionList(String userId) async {
         throw ServerException();
     }
   } catch (e) {
+    rethrow;
+  }
+}
+
+
+Future<List<TeacherProblemGetModel>> getAllSolutionsByPostId(String postId) async {
+  final String url = "/api/Teacher/s/SolutionTeacherByPostId/$postId";
+
+  try {
+    final response = await client.get(url);
+
+    log("🔗 Request URL: $url");
+    log("📦 Status Code: ${response.statusCode}");
+    log("🧾 Response Data: '${response.data}'");
+
+    switch (response.statusCode) {
+      case 200:
+        final rawData = response.data;
+
+        if (rawData == null || rawData.toString().trim().isEmpty) {
+          log("⚠️ Empty response body. Returning empty list.");
+          return [];
+        }
+
+        final decoded = rawData is String ? jsonDecode(rawData) : rawData;
+
+        if (decoded is List) {
+          return decoded
+              .map((json) => TeacherProblemGetModel.fromJson(json))
+              .toList();
+        } else {
+          throw InputException("❌ Expected a List but got: ${decoded.runtimeType}");
+        }
+
+      case 404:
+        log("❌ 404 Error - Resource not found.");
+        throw AuthException();
+
+      default:
+        log("❌ Server Error - Status code: ${response.statusCode}");
+        throw ServerException();
+    }
+  } catch (e) {
+    log("❌ Exception caught: $e");
     rethrow;
   }
 }
