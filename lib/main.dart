@@ -1,3 +1,4 @@
+import 'package:edex_365_getx/initial_binding.dart';
 import 'package:edex_365_getx/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Edex App',
       debugShowCheckedModeBanner: false,
+      initialBinding: InitialBinding(),
       navigatorKey: Get.key, // Add this line to fix GlobalKey issue
       initialRoute: AppRoutes.splash,
       getPages: AppPages.routes, // Changed from appPages to AppPages.routes

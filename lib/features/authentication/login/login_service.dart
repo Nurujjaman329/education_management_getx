@@ -1,13 +1,14 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:edex_365_getx/features/authentication/auth_storage_service.dart';
 import 'package:edex_365_getx/features/authentication/login/model/login_response.dart';
+
 
 class LoginService {
   final Dio _dio;
-  final FlutterSecureStorage _secureStorage;
+  final AuthStorageService _storageService = AuthStorageService();
 
-  LoginService(this._dio) : _secureStorage = const FlutterSecureStorage();
+  LoginService(this._dio);
 
   Future<LoginResponse> login({
     required String mobileNo,
@@ -17,7 +18,7 @@ class LoginService {
     try {
       final Map<String, dynamic> requestBody = {
         'mobileNo': mobileNo,
-        'password': '[PROTECTED]', // Obscured for logs
+        'password': '[PROTECTED]',
         'deviceToken': deviceToken,
       };
 
@@ -39,9 +40,11 @@ class LoginService {
       if (response.statusCode == 200) {
         final loginResponse = LoginResponse.fromJson(response.data);
 
-        await _secureStorage.write(key: 'auth_token', value: loginResponse.token);
+        // ✅ Use _storageService instead of _secureStorage
+        await _storageService.saveToken(loginResponse.token);
+        await _storageService.saveUserType(loginResponse.type);
 
-        log('Token saved securely', name: 'LoginService');
+        log('Token and user_type saved securely', name: 'LoginService');
 
         return loginResponse;
       } else {

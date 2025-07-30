@@ -1,5 +1,6 @@
 import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/features/home/dashboard/view/dummy_tab_view.dart';
+import 'package:edex_365_getx/features/home/user_profile/user_profile_screen.dart';
 import 'package:edex_365_getx/features/student_panel/problem_post/view/problem_post_view.dart';
 import 'package:flutter/material.dart';
 
@@ -14,9 +15,9 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    StudentHomeTab(),
+    const StudentHomeTab(),
     ProblemPostView(),
-    StudentSettingsTab(),
+    const UserProfileScreen(),
   ];
 
   @override
@@ -28,9 +29,9 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
         items: [
-          _NavBarItem(icon: Icons.home_outlined, activeIcon: Icons.home, label: 'Home'),
-          _NavBarItem(icon: Icons.add_outlined, activeIcon: Icons.add, label: 'Post'),
-          _NavBarItem(icon: Icons.settings_outlined, activeIcon: Icons.settings, label: 'Settings'),
+          const _NavBarItem(icon: Icons.home_outlined, activeIcon: Icons.home, label: 'Home'),
+          const _NavBarItem(icon: Icons.add_outlined, activeIcon: Icons.add, label: 'Post'),
+          const _NavBarItem(icon: Icons.settings_outlined, activeIcon: Icons.settings, label: 'Settings'),
         ],
       ),
     );
