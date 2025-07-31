@@ -9,16 +9,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthController extends GetxController {
   final AuthService _service = AuthService();
 
-  var isLoading = false.obs;
+ var isLoading = false.obs;
   var loginResponse = Rxn<LoginResponse>();
+  var userId = ''.obs; // Add this line to store user ID
 
   Future<void> login(String mobileNo, String password) async {
     try {
       isLoading.value = true;
-
-      // Use a static or test token for now
       const deviceToken = 'static_device_token_123';
-      
 
       final response = await _service.login(
         mobileNo: mobileNo,
@@ -27,11 +25,13 @@ class AuthController extends GetxController {
       );
 
       loginResponse.value = response;
+      userId.value = response.id; // Store the user ID from response
 
       // Save token & type
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', response.token);
       await prefs.setString('userType', response.type);
+      await prefs.setString('userId', response.id); // Save user ID to shared preferences
 
       print('Login successful: ${response.token}, ${response.type}');
 
@@ -50,6 +50,12 @@ class AuthController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+    // Add this method to get userId from shared preferences when app starts
+  Future<void> loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    userId.value = prefs.getString('userId') ?? '';
   }
 
   Future<void> register(SignUpRequestBody body) async {
