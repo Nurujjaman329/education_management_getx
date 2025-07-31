@@ -14,7 +14,7 @@ class SharedService {
     try {
       final response = await client.get("/api/PostType/s/GetAllPostType");
 
-      log('Version API response: ${response.data}');
+     // log('Version API response: ${response.data}');
       switch (response.statusCode) {
         case 200:
           List<dynamic> data = response.data;
@@ -25,7 +25,7 @@ class SharedService {
           throw ServerException();
       }
     } catch (e) {
-      log("Version fetch error: $e");
+    //  log("Version fetch error: $e");
       rethrow;
     }
   }
@@ -34,7 +34,7 @@ class SharedService {
     try {
       final response = await client.get("/api/class/s/AllClass");
 
-      log('Bangla Class API response: ${response.data}');
+    //  log('Bangla Class API response: ${response.data}');
       switch (response.statusCode) {
         case 200:
           List<dynamic> data = response.data;
@@ -45,7 +45,7 @@ class SharedService {
           throw ServerException();
       }
     } catch (e) {
-      log("Bangla class fetch error: $e");
+    //  log("Bangla class fetch error: $e");
       rethrow;
     }
   }
@@ -54,7 +54,7 @@ class SharedService {
     try {
       final response = await client.get("/api/EnglishClass/s/GetAllEnglishClass");
 
-      log('English Class API response: ${response.data}');
+    //  log('English Class API response: ${response.data}');
       switch (response.statusCode) {
         case 200:
           List<dynamic> data = response.data;
@@ -65,7 +65,7 @@ class SharedService {
           throw ServerException();
       }
     } catch (e) {
-      log("English class fetch error: $e");
+     // log("English class fetch error: $e");
       rethrow;
     }
   }
@@ -75,7 +75,7 @@ class SharedService {
     try {
       final response = await client.get("/api/Role/s/AllRoles");
 
-      log('User Roles API response: ${response.data}');
+     // log('User Roles API response: ${response.data}');
       switch (response.statusCode) {
         case 200:
           List<dynamic> data = response.data;
@@ -86,7 +86,7 @@ class SharedService {
           throw ServerException();
       }
     } catch (e) {
-      log("User roles fetch error: $e");
+     // log("User roles fetch error: $e");
       rethrow;
     }
   }
@@ -96,7 +96,7 @@ class SharedService {
     try {
       final response = await client.get("/api/subject/s/AllSubject");
 
-      log('Subject API response: ${response.data}');
+      //log('Subject API response: ${response.data}');
       switch (response.statusCode) {
         case 200:
           List<dynamic> data = response.data;
@@ -107,7 +107,7 @@ class SharedService {
           throw ServerException();
       }
     } catch (e) {
-      log("Subject fetch error: $e");
+      //log("Subject fetch error: $e");
       rethrow;
     }
   }

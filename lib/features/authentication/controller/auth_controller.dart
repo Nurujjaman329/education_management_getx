@@ -13,6 +13,12 @@ class AuthController extends GetxController {
   var loginResponse = Rxn<LoginResponse>();
   var userId = ''.obs; // Add this line to store user ID
 
+  @override
+  void onInit() {
+    super.onInit();
+    loadUserData();
+  }
+
   Future<void> login(String mobileNo, String password) async {
     try {
       isLoading.value = true;

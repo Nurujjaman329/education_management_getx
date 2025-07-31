@@ -1,4 +1,5 @@
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
+import 'package:edex_365_getx/features/home/student_home_view.dart';
 import 'package:edex_365_getx/features/student_panel/view/problem_post_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +17,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
 
   // Dummy views for tabs (replace with actual widgets)
   final List<Widget> _pages = [
-    Center(child: Text('🏠 Home')),
+    StudentHomeView(),
      ProblemPostView(),
     Center(child: Text('💰 Wallet')),
     Center(child: Text('⚙️ Settings')),

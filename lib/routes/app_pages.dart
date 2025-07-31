@@ -4,6 +4,7 @@ import 'package:edex_365_getx/features/authentication/view/registration_view.dar
 import 'package:edex_365_getx/features/home/home_part/student_home_screen.dart';
 import 'package:edex_365_getx/features/home/home_part/teacher_home_screen.dart';
 import 'package:edex_365_getx/features/home/splash_screen.dart';
+import 'package:edex_365_getx/features/student_panel/bindings/student_problem_list_binding.dart';
 import 'package:edex_365_getx/features/student_panel/bindings/student_problem_post_binding.dart';
 import 'package:get/get.dart';
 import 'app_routes.dart';
@@ -24,10 +25,14 @@ class AppPages {
       page: () => const RegistrationScreen(),
       binding: AuthBinding(),
     ),
-    GetPage(
+   GetPage(
       name: AppRoutes.studentHome,
       page: () => const StudentHomeScreen(),
-      binding: StudentProblemPostBinding(),
+      // Combine both bindings here so both controllers/services are available
+      bindings: [
+        StudentProblemPostBinding(),
+        StudentProblemListBinding(),
+      ],
     ),
     GetPage(
       name: AppRoutes.teacherHome,

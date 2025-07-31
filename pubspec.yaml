@@ -46,7 +46,7 @@ dependencies:
   dio: ^5.3.3
   # Local cache
   shared_preferences: ^2.5.3
-
+  syncfusion_flutter_charts: ^27.1.57
 
 
 
