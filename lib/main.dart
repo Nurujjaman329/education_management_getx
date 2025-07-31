@@ -1,8 +1,8 @@
-import 'package:edex_365_getx/initial_binding.dart';
 import 'package:edex_365_getx/routes/app_pages.dart';
+import 'package:edex_365_getx/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'routes/app_routes.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -14,12 +14,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Edex App',
       debugShowCheckedModeBanner: false,
-      initialBinding: InitialBinding(),
-      navigatorKey: Get.key, // Add this line to fix GlobalKey issue
+      title: 'Education App',
       initialRoute: AppRoutes.splash,
-      getPages: AppPages.routes, // Changed from appPages to AppPages.routes
+      getPages: AppPages.pages,
     );
   }
 }
