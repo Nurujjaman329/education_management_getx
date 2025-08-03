@@ -5,5 +5,6 @@ class AppRoutes {
   static const studentHome = '/student-home';
   static const teacherHome = '/teacher-home';
   static const settings = '/settings';
+  static const transactionHistory = '/transaction-history';
+  static const studentProblemAll = '/student-problems/all';
 }
-

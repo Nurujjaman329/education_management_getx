@@ -1,3 +1,4 @@
+import 'package:edex_365_getx/core/widgets/custom_curved_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
@@ -34,13 +35,7 @@ class _UpdatePasswordFormState extends State<UpdatePasswordForm> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Change Password'),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: AppColors.textPrimary,
-      ),
+      appBar: const CustomCurvedAppBar(title: "Change Password"),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Obx(() {

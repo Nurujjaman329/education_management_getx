@@ -8,6 +8,9 @@ import 'package:edex_365_getx/features/shared_panel/bindings/shared_binding.dart
 import 'package:edex_365_getx/features/shared_panel/view/settings_content.dart';
 import 'package:edex_365_getx/features/student_panel/bindings/student_problem_list_binding.dart';
 import 'package:edex_365_getx/features/student_panel/bindings/student_problem_post_binding.dart';
+import 'package:edex_365_getx/features/student_panel/bindings/student_transaction_history_binding.dart';
+import 'package:edex_365_getx/features/student_panel/view/student_problem_list_view.dart';
+import 'package:edex_365_getx/features/student_panel/view/transaction_history_view.dart';
 import 'package:get/get.dart';
 import 'app_routes.dart';
 
@@ -33,6 +36,7 @@ class AppPages {
       bindings: [
         StudentProblemPostBinding(),
         StudentProblemListBinding(),
+        TransactionHistoryBinding(),
       ],
     ),
     GetPage(
@@ -44,6 +48,19 @@ class AppPages {
       name: AppRoutes.settings,
       page: () => const SettingsContent(),
       binding: SharedBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.transactionHistory,
+      page: () {
+        final userId = Get.parameters['userId'] ?? '';
+        return TransactionHistoryView(userId: userId);
+      },
+      binding: TransactionHistoryBinding(), // Reuse SharedBinding if applicable
+    ),
+        GetPage(
+      name: AppRoutes.studentProblemAll,
+      page: () => const StudentProblemListView(),
+      binding: StudentProblemListBinding(),
     ),
   ];
 }

@@ -1,6 +1,5 @@
 
 import 'dart:io';
-
 import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
@@ -81,368 +80,300 @@ class ProblemPostView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Post Your Problem'),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: AppColors.textPrimary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Get.back(),
-          ),
-        ],
-      ),
+     
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
-              const Text(
-                'Need Help With a Problem?',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
+              // Header Section
+              _buildSectionHeader(
+                title: "Problem Details",
+                subtitle: "Provide information about the problem you're facing",
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Fill in the details below to get help from our community',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
-              // Problem Image Section
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Add Problem Image (Optional)',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: Obx(() => Container(
-                      height: 180,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: selectedImage.value == null 
-                              ? AppColors.divider 
-                              : Colors.transparent,
-                          width: 1.5,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: selectedImage.value == null
-                          ? const Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.add_photo_alternate_outlined,
-                                  size: 48,
-                                  color: AppColors.textSecondary,
-                                ),
-                                SizedBox(height: 12),
-                                Text(
-                                  'Tap to upload an image',
-                                  style: TextStyle(
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Stack(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: Image.file(
-                                    selectedImage.value!,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 8,
-                                  right: 8,
-                                  child: GestureDetector(
-                                    onTap: () => selectedImage.value = null,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(4),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.5),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.close,
-                                        color: Colors.white,
-                                        size: 18,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                    )),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
+              // Image Upload
+              _buildImageUploadSection(),
+              const SizedBox(height: 24),
 
-              // Problem Topic
-              const Text(
-                'Problem Topic*',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
-                ),
+              // Problem Info Section
+              _buildSectionHeader(
+                title: "Problem Information",
+                subtitle: "Describe what you need help with",
               ),
-              const SizedBox(height: 8),
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'E.g. Quadratic Equations, Newton\'s Laws...',
-                  filled: true,
-                  fillColor: AppColors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                ),
-                style: const TextStyle(color: AppColors.textPrimary),
+              const SizedBox(height: 16),
+              
+              // Topic Field
+              _buildTextField(
+                label: "Problem Topic*",
+                hint: "E.g. Quadratic Equations, Newton's Laws...",
+                controller: TextEditingController(text: problemTopic.value),
                 onChanged: (value) => problemTopic.value = value,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Please enter a topic' : null,
+                validator: (value) => value?.isEmpty ?? true ? 'Please enter a topic' : null,
               ),
-              const SizedBox(height: 20),
-
-              // Problem Description
-              const Text(
-                'Problem Description*',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                maxLines: 5,
-                decoration: InputDecoration(
-                  hintText: 'Describe your problem in detail...',
-                  filled: true,
-                  fillColor: AppColors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                ),
-                style: const TextStyle(color: AppColors.textPrimary),
+              const SizedBox(height: 16),
+              
+              // Description Field
+              _buildTextField(
+                label: "Problem Description*",
+                hint: "Describe your problem in detail...",
+                controller: TextEditingController(text: problemDescription.value),
                 onChanged: (value) => problemDescription.value = value,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Please describe your problem' : null,
+                validator: (value) => value?.isEmpty ?? true ? 'Please describe your problem' : null,
+                maxLines: 5,
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 24),
 
-              // Category Selection Header
-              const Text(
-                'Problem Categories',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
+              // Category Section
+              _buildSectionHeader(
+                title: "Problem Categories",
+                subtitle: "Select relevant categories for your problem",
               ),
-              const SizedBox(height: 4),
-              const Text(
-                'Select the relevant categories for your problem',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 20),
-
+              const SizedBox(height: 16),
+              
               // Subject Dropdown
-              Obx(() => _CustomDropdown(
-                    value: selectedSubject.value.isEmpty ? null : selectedSubject.value,
-                    label: 'Subject*',
-                    hint: 'Select subject',
-                    items: sharedController.subjectList
-                        .map((subject) => DropdownMenuItem(
-                              value: subject.id,
-                              child: Text(subject.subjectName),
-                            ))
-                        .toList(),
-                    onChanged: (value) => selectedSubject.value = value ?? '',
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'Please select a subject' : null,
-                  )),
+              _buildDropdown(
+                label: "Subject*",
+                value: selectedSubject.value,
+                items: sharedController.subjectList
+                    .map((s) => DropdownMenuItem(
+                          value: s.id,
+                          child: Text(s.subjectName),
+                        ))
+                    .toList(),
+                onChanged: (value) => selectedSubject.value = value ?? '',
+                validator: (value) => value?.isEmpty ?? true ? 'Please select a subject' : null,
+              ),
               const SizedBox(height: 16),
-
-              // Academic Version Dropdown
-              Obx(() => _CustomDropdown(
-                    value: selectedAcademy.value.isEmpty ? null : selectedAcademy.value,
-                    label: 'Academic Version*',
-                    hint: 'Select version',
-                    items: sharedController.versionList
-                        .map((item) => DropdownMenuItem(
-                              value: item.id,
-                              child: Text(item.postName),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      selectedAcademy.value = value ?? '';
-                      selectedEnglish.value = '';
-                      selectedBangla.value = '';
-                    },
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'Please select academic version' : null,
-                  )),
+              
+              // Version Dropdown
+              _buildDropdown(
+                label: "Academic Version*",
+                value: selectedAcademy.value,
+                items: sharedController.versionList
+                    .map((v) => DropdownMenuItem(
+                          value: v.id,
+                          child: Text(v.postName),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  selectedAcademy.value = value ?? '';
+                  selectedEnglish.value = '';
+                  selectedBangla.value = '';
+                },
+                validator: (value) => value?.isEmpty ?? true ? 'Please select version' : null,
+              ),
               const SizedBox(height: 16),
-
+              
               // Class Dropdown (Conditional)
               Obx(() {
                 if (sharedController.isLoading.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 
-                final selectedVersion = sharedController.versionList
-                    .firstWhereOrNull((v) => v.id == selectedAcademy.value);
-                final versionName = selectedVersion?.postName.toLowerCase() ?? '';
-                
                 if (selectedAcademy.value.isEmpty) return const SizedBox();
                 
-                if (versionName.contains('english') || selectedAcademy.value == '1') {
-                  return _CustomDropdown(
-                    value: selectedEnglish.value.isEmpty ? null : selectedEnglish.value,
-                    label: 'Class (English Version)*',
-                    hint: 'Select class',
-                    items: sharedController.englishClassList
-                        .map((item) => DropdownMenuItem(
-                              value: item.id,
-                              child: Text(item.className),
-                            ))
-                        .toList(),
-                    onChanged: (value) => selectedEnglish.value = value ?? '',
-                    validator: (value) => 
-                        value == null || value.isEmpty ? 'Please select a class' : null,
-                  );
-                } else {
-                  return _CustomDropdown(
-                    value: selectedBangla.value.isEmpty ? null : selectedBangla.value,
-                    label: 'Class (Bangla Version)*',
-                    hint: 'Select class',
-                    items: sharedController.banglaClassList
-                        .map((item) => DropdownMenuItem(
-                              value: item.id,
-                              child: Text(item.className),
-                            ))
-                        .toList(),
-                    onChanged: (value) => selectedBangla.value = value ?? '',
-                    validator: (value) => 
-                        value == null || value.isEmpty ? 'Please select a class' : null,
-                  );
-                }
+                final isEnglish = selectedAcademy.value == '1' || 
+                    (sharedController.versionList
+                        .firstWhereOrNull((v) => v.id == selectedAcademy.value)
+                        ?.postName.toLowerCase().contains('english') ?? false);
+                
+                return _buildDropdown(
+                  label: isEnglish ? "Class (English)*" : "Class (Bangla)*",
+                  value: isEnglish ? selectedEnglish.value : selectedBangla.value,
+                  items: (isEnglish 
+                      ? sharedController.englishClassList 
+                      : sharedController.banglaClassList)
+                      .map((c) => DropdownMenuItem(
+                            value: c.id,
+                            child: Text(c.className),
+                          ))
+                      .toList(),
+                  onChanged: (value) => isEnglish 
+                      ? selectedEnglish.value = value ?? '' 
+                      : selectedBangla.value = value ?? '',
+                  validator: (value) => value?.isEmpty ?? true ? 'Please select class' : null,
+                );
               }),
-              const SizedBox(height: 40),
-
+              const SizedBox(height: 32),
+              
               // Submit Button
-              Obx(() => SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: postController.isLoading.value ? null : _submit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: postController.isLoading.value
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Text(
-                              'Post Problem',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ),
-                  )),
-              const SizedBox(height: 20),
+              Obx(() => _buildSubmitButton()),
+              const SizedBox(height: 16),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-class _CustomDropdown extends StatelessWidget {
-  final String? value;
-  final String label;
-  final String hint;
-  final List<DropdownMenuItem<String>> items;
-  final ValueChanged<String?> onChanged;
-  final String? Function(String?)? validator;
+  // Reusable Widgets
 
-  const _CustomDropdown({
-    required this.value,
-    required this.label,
-    required this.hint,
-    required this.items,
-    required this.onChanged,
-    this.validator,
-  });
+  Widget _buildSectionHeader({required String title, required String subtitle}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          subtitle,
+          style: TextStyle(
+            fontSize: 13,
+            color: AppColors.textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildImageUploadSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Problem Image (Optional)",
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: _pickImage,
+          child: Obx(() => Container(
+            height: 160,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: selectedImage.value == null 
+                    ? AppColors.divider.withOpacity(0.5)
+                    : Colors.transparent,
+                width: 1,
+              ),
+            ),
+            child: selectedImage.value == null
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.add_photo_alternate,
+                        size: 40,
+                        color: AppColors.textSecondary.withOpacity(0.5),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Tap to add image",
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  )
+                : Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          selectedImage.value!,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: GestureDetector(
+                          onTap: () => selectedImage.value = null,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+          )),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    required ValueChanged<String> onChanged,
+    required FormFieldValidator<String> validator,
+    int maxLines = 1,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          maxLines: maxLines,
+          decoration: InputDecoration(
+            hintText: hint,
+            filled: true,
+            fillColor: AppColors.surface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.all(16),
+          ),
+          style: TextStyle(color: AppColors.textPrimary),
+          onChanged: onChanged,
+          validator: validator,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdown({
+    required String label,
+    required String value,
+    required List<DropdownMenuItem<String>> items,
+    required ValueChanged<String?> onChanged,
+    required FormFieldValidator<String?> validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: AppColors.textPrimary,
@@ -450,34 +381,63 @@ class _CustomDropdown extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: value,
-          decoration: InputDecoration(
-            hintText: hint,
-            filled: true,
-            fillColor: AppColors.surface,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-          ),
-          dropdownColor: AppColors.surface,
-          icon: const Icon(
-            Icons.arrow_drop_down,
-            color: AppColors.textSecondary,
-          ),
+          value: value.isEmpty ? null : value,
           items: items,
           onChanged: onChanged,
           validator: validator,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: AppColors.surface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           ),
+          style: TextStyle(color: AppColors.textPrimary),
+          dropdownColor: AppColors.surface,
+          icon: Icon(Icons.arrow_drop_down, color: AppColors.textSecondary),
           isExpanded: true,
+          hint: Text(
+            "Select ${label.split('*').first.trim()}",
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: postController.isLoading.value ? null : _submit,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          elevation: 0,
+        ),
+        child: postController.isLoading.value
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  color: Colors.white,
+                ),
+              )
+            : const Text(
+                "Post Problem",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+      ),
     );
   }
 }

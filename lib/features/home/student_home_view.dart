@@ -1,5 +1,6 @@
 import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
+import 'package:edex_365_getx/features/student_panel/view/student_problem_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:edex_365_getx/features/student_panel/controller/student_problem_list_controller.dart';
@@ -14,7 +15,8 @@ class StudentHomeView extends StatefulWidget {
 }
 
 class _StudentHomeViewState extends State<StudentHomeView> {
-  final StudentProblemListController controller = Get.find<StudentProblemListController>();
+  final StudentProblemListController controller =
+      Get.find<StudentProblemListController>();
   final AuthController authController = Get.find<AuthController>();
   late Worker _userIdWorker;
 
@@ -26,7 +28,8 @@ class _StudentHomeViewState extends State<StudentHomeView> {
         controller.fetchAll(id);
       }
     });
-    final userId = authController.loginResponse.value?.id ?? authController.userId.value;
+    final userId =
+        authController.loginResponse.value?.id ?? authController.userId.value;
     if (userId.isNotEmpty) {
       controller.fetchAll(userId);
     }
@@ -42,7 +45,8 @@ class _StudentHomeViewState extends State<StudentHomeView> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        final userId = authController.loginResponse.value?.id ?? authController.userId.value;
+        final userId = authController.loginResponse.value?.id ??
+            authController.userId.value;
         if (userId.isNotEmpty) {
           await controller.fetchAll(userId);
         }
@@ -75,15 +79,15 @@ class _StudentHomeViewState extends State<StudentHomeView> {
               // Welcome Header
               _buildWelcomeHeader(),
               const SizedBox(height: 24),
-              
+
               // Quick Stats Cards
               _buildQuickStats(),
               const SizedBox(height: 24),
-              
+
               // Charts Section
               _buildChartsSection(),
               const SizedBox(height: 24),
-              
+
               // Recent Problems
               _buildRecentProblems(),
             ],
@@ -154,6 +158,27 @@ class _StudentHomeViewState extends State<StudentHomeView> {
           value: controller.totalProblems.length.toString(),
           icon: Icons.assignment,
           color: AppColors.primary,
+          onTap: () {
+            Navigator.of(context).push(
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const StudentProblemListView(),
+                transitionsBuilder: (_, animation, __, child) {
+                  const begin = Offset(1.0, 0.0); // Start from right
+                  const end = Offset.zero; // End at center
+                  const curve = Curves.easeInOut;
+
+                  final tween = Tween(begin: begin, end: end)
+                      .chain(CurveTween(curve: curve));
+                  final offsetAnimation = animation.drive(tween);
+
+                  return SlideTransition(
+                    position: offsetAnimation,
+                    child: child,
+                  );
+                },
+              ),
+            );
+          },
         ),
         _buildStatItem(
           title: "Solved",
@@ -176,52 +201,56 @@ class _StudentHomeViewState extends State<StudentHomeView> {
     required String value,
     required IconData icon,
     required Color color,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
-            child: Icon(
-              icon,
-              size: 24,
-              color: color,
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                size: 24,
+                color: color,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+            const SizedBox(height: 12),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 12,
-              color: AppColors.textSecondary,
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.textSecondary,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -278,14 +307,16 @@ class _StudentHomeViewState extends State<StudentHomeView> {
                         dataSource: [
                           ChartData('Solved', solved, AppColors.success),
                           ChartData('Pending', pending, AppColors.secondary),
-                          if (others > 0) ChartData('Others', others, AppColors.primary),
+                          if (others > 0)
+                            ChartData('Others', others, AppColors.primary),
                         ],
                         xValueMapper: (ChartData data, _) => data.category,
                         yValueMapper: (ChartData data, _) => data.value,
                         dataLabelSettings: const DataLabelSettings(
                           isVisible: true,
                           labelPosition: ChartDataLabelPosition.inside,
-                          textStyle: TextStyle(color: Colors.white, fontSize: 12),
+                          textStyle:
+                              TextStyle(color: Colors.white, fontSize: 12),
                         ),
                         enableTooltip: true,
                       ),
@@ -297,7 +328,7 @@ class _StudentHomeViewState extends State<StudentHomeView> {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Bar Chart
         Card(
           elevation: 0,
@@ -396,7 +427,6 @@ class _StudentHomeViewState extends State<StudentHomeView> {
           ],
         ),
         const SizedBox(height: 12),
-        
         if (controller.totalProblems.isEmpty)
           Container(
             padding: const EdgeInsets.all(24),
