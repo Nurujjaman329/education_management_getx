@@ -2,6 +2,7 @@ import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/view/update_password_form.dart';
+import 'package:edex_365_getx/features/shared_panel/view/user_info_details_view.dart';
 import 'package:edex_365_getx/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -127,38 +128,61 @@ class SettingsContent extends StatelessWidget {
             child: Column(
               children: [
                 _buildSettingsItem(
-                    icon: Icons.person_outline, title: 'Edit Profile'),
+                  icon: Icons.person_outline,
+                  title: 'User Info',
+
+                    onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) =>
+                            const UserInfoDetailsView(),
+                        transitionsBuilder: (_, animation, __, child) {
+                          const begin = Offset(1.0, 0.0); // Start from right
+                          const end = Offset.zero; // End at center
+                          const curve = Curves.easeInOut;
+
+                          final tween = Tween(begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
+                          final offsetAnimation = animation.drive(tween);
+
+                          return SlideTransition(
+                            position: offsetAnimation,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                  },
+
+          
+                ),
                 const Divider(height: 1, indent: 16, endIndent: 16),
                 _buildSettingsItem(
                   icon: Icons.lock_outline,
                   title: 'Change Password',
-
-                   onTap: () {
+                  onTap: () {
                     final userId = Get.find<AuthController>().userId.value;
-            Navigator.of(context).push(
-              PageRouteBuilder(
-                pageBuilder: (_, __, ___) => UpdatePasswordForm(userId: userId),
-                transitionsBuilder: (_, animation, __, child) {
-                  const begin = Offset(1.0, 0.0); // Start from right
-                  const end = Offset.zero; // End at center
-                  const curve = Curves.easeInOut;
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) =>
+                            UpdatePasswordForm(userId: userId),
+                        transitionsBuilder: (_, animation, __, child) {
+                          const begin = Offset(1.0, 0.0); // Start from right
+                          const end = Offset.zero; // End at center
+                          const curve = Curves.easeInOut;
 
-                  final tween = Tween(begin: begin, end: end)
-                      .chain(CurveTween(curve: curve));
-                  final offsetAnimation = animation.drive(tween);
+                          final tween = Tween(begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
+                          final offsetAnimation = animation.drive(tween);
 
-                  return SlideTransition(
-                    position: offsetAnimation,
-                    child: child,
-                  );
-                },
-              ),
-            );
-          },
-                  // onTap: () {
-                  //   final userId = Get.find<AuthController>().userId.value;
-                  //   Get.to(() => UpdatePasswordForm(userId: userId));
-                  // },
+                          return SlideTransition(
+                            position: offsetAnimation,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
                 const Divider(height: 1, indent: 16, endIndent: 16),
                 _buildSettingsItem(

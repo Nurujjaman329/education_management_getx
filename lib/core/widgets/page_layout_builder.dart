@@ -1,41 +1,23 @@
-import 'package:flutter/material.dart';
+  // onTap: () {
+  //                   final userId = Get.find<AuthController>().userId.value;
+  //                   Navigator.of(context).push(
+  //                     PageRouteBuilder(
+  //                       pageBuilder: (_, __, ___) =>
+  //                           UpdatePasswordForm(userId: userId),
+  //                       transitionsBuilder: (_, animation, __, child) {
+  //                         const begin = Offset(1.0, 0.0); // Start from right
+  //                         const end = Offset.zero; // End at center
+  //                         const curve = Curves.easeInOut;
 
-class PageLayoutBuilder extends StatelessWidget {
-  final Widget child;
-  final bool withPadding;
+  //                         final tween = Tween(begin: begin, end: end)
+  //                             .chain(CurveTween(curve: curve));
+  //                         final offsetAnimation = animation.drive(tween);
 
-  const PageLayoutBuilder({
-    super.key,
-    required this.child,
-    this.withPadding = true,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 400),
-      transitionBuilder: (Widget child, Animation<double> animation) {
-        return FadeTransition(
-          opacity: animation,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 0.05),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutQuart,
-            )),
-            child: child,
-          ),
-        );
-      },
-      child: KeyedSubtree(
-        key: ValueKey(DateTime.now()),
-        child: Padding(
-          padding: withPadding ? const EdgeInsets.all(16.0) : EdgeInsets.zero,
-          child: child,
-        ),
-      ),
-    );
-  }
-}
+  //                         return SlideTransition(
+  //                           position: offsetAnimation,
+  //                           child: child,
+  //                         );
+  //                       },
+  //                     ),
+  //                   );
+  //                 },
