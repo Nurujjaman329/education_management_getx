@@ -5,6 +5,7 @@ import 'package:edex_365_getx/core/error/exceptions.dart';
 import 'package:edex_365_getx/core/network/dio_client.dart';
 import 'package:edex_365_getx/features/shared_panel/model/all_version_class_list_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/subject_response_model.dart';
+import 'package:edex_365_getx/features/shared_panel/model/update_user_info_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/user_details_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/user_role_response_model.dart';
 import '../model/academy_version_list_response_model.dart';
@@ -163,6 +164,35 @@ class SharedService {
     } catch (error) {
       log('Error -> ${error.toString()}');
       throw InputException("Failed to update password: ${error.toString()}");
+    }
+  }
+
+
+    Future<UpdateUserInfoResponseModel> updateUser(UpdateDetailsResponseBody body) async {
+    try {
+      final formData = await body.toFormData();
+
+      log('Sending form data: ${formData.fields}');
+      final response = await client.put('/api/Auth/s/Update', data: formData);
+      log('Response data: ${response.data}');
+      log('Response URI: ${response.realUri}');
+
+      switch (response.statusCode) {
+        case 200:
+          return UpdateUserInfoResponseModel.fromJson(response.data);
+        case 400:
+          final errorMsg = response.data['errors'];
+          throw InputException("Validation Error: ${errorMsg ?? 'Input Error'}");
+        case 404:
+          throw AuthException();
+        default:
+          throw ServerException();
+      }
+    } catch (error) {
+      if (error is DioException && error.response?.data['errors'] != null) {
+        throw InputException("Validation Error: ${error.response?.data['errors']}");
+      }
+      throw ServerException();
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
+import 'package:edex_365_getx/features/shared_panel/view/edit_profile_view.dart';
 import 'package:edex_365_getx/features/shared_panel/view/update_password_form.dart';
 import 'package:edex_365_getx/features/shared_panel/view/user_info_details_view.dart';
 import 'package:edex_365_getx/routes/app_routes.dart';
@@ -93,10 +94,14 @@ class SettingsContent extends StatelessWidget {
                       ],
                     ),
                   ),
-                  IconButton(
+                 IconButton(
                     icon: const Icon(Icons.edit, color: AppColors.primary),
                     onPressed: () {
-                      // Get.toNamed(AppRoutes.editProfile);
+                      Get.to(
+                        () => const EditProfileView(),
+                        transition: Transition.rightToLeft,
+                        duration: const Duration(milliseconds: 300),
+                      );
                     },
                   ),
                 ],
@@ -230,26 +235,51 @@ class SettingsContent extends StatelessWidget {
           ),
           const SizedBox(height: 32),
 
-          // Logout Button
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
+        SizedBox(
+  width: double.infinity,
+  child: ElevatedButton(
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Confirm Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // Close dialog
+              child: const Text('No'),
+            ),
+            TextButton(
               onPressed: () {
+                Navigator.of(context).pop(); // Close dialog first
                 Get.find<AuthController>().logout();
                 Get.offAllNamed(AppRoutes.login);
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.error.withOpacity(0.1),
-                foregroundColor: AppColors.error,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                elevation: 0,
+              child: const Text(
+                'Yes',
+                style: TextStyle(color: AppColors.error),
               ),
-              child: const Text('Logout',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
             ),
-          ),
+          ],
+        ),
+      );
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.error.withOpacity(0.1),
+      foregroundColor: AppColors.error,
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      elevation: 0,
+    ),
+    child: const Text(
+      'Logout',
+      style: TextStyle(fontWeight: FontWeight.bold),
+    ),
+  ),
+),
+
           const SizedBox(height: 16),
         ],
       ),

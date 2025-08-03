@@ -1,5 +1,6 @@
 import 'package:edex_365_getx/features/shared_panel/model/all_version_class_list_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/subject_response_model.dart';
+import 'package:edex_365_getx/features/shared_panel/model/update_user_info_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/user_details_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/user_role_response_model.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,8 @@ class SharedController extends GetxController {
   var userRoleList = <UserRolesResponseModel>[].obs;
   var subjectList = <SubjectResponseModel>[].obs;
   var userDetailsList = <UserDetailsResponseModel>[].obs;
+  var updatedUser = Rxn<UpdateUserInfoResponseModel>();
+
 
   // Selected IDs
   var selectedRoleIds = <String>[].obs;
@@ -150,4 +153,19 @@ Future<void> fetchUserRoleList() async {
       isLoading.value = false;
     }
   }
+
+Future<void> updateUser(UpdateDetailsResponseBody updateBody) async {
+  isLoading.value = true;
+  error.value = null;
+
+  try {
+    final result = await _service.updateUser(updateBody);
+    updatedUser.value = result; // ✅ now matches the type
+  } catch (e) {
+    error.value = e.toString();
+  } finally {
+    isLoading.value = false;
+  }
+}
+
 }
