@@ -1,5 +1,6 @@
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/home/student_home_view.dart';
+import 'package:edex_365_getx/features/shared_panel/view/settings_content.dart';
 import 'package:edex_365_getx/features/student_panel/view/problem_post_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,10 +18,10 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
 
   // Dummy views for tabs (replace with actual widgets)
   final List<Widget> _pages = [
-    StudentHomeView(),
-     ProblemPostView(),
-    Center(child: Text('💰 Wallet')),
-    Center(child: Text('⚙️ Settings')),
+    const StudentHomeView(),
+    ProblemPostView(),
+    const Center(child: Text('💰 Wallet')),
+    const SettingsContent(), // Changed from SettingsView to SettingsContent
   ];
 
   void _onItemTapped(int index) {
@@ -32,8 +33,9 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     // appBar: AppBar(title: const Text('Student Panel')),
-      body: SafeArea(child: _pages[_selectedIndex]),
+      body: SafeArea(
+        child: _pages[_selectedIndex],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           authController.logout();

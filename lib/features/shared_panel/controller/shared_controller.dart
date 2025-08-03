@@ -1,5 +1,6 @@
 import 'package:edex_365_getx/features/shared_panel/model/all_version_class_list_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/subject_response_model.dart';
+import 'package:edex_365_getx/features/shared_panel/model/user_details_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/user_role_response_model.dart';
 import 'package:get/get.dart';
 import '../model/academy_version_list_response_model.dart';
@@ -8,25 +9,32 @@ import '../service/shared_service.dart';
 class SharedController extends GetxController {
   final SharedService _service = SharedService();
 
+  // Observables
   var isLoading = false.obs;
+  var errorMessage = ''.obs;
+  var successMessage = ''.obs;
+  var error = Rxn<String>();
+
+  // Lists
   var versionList = <AcademyVersionListResponseModel>[].obs;
   var banglaClassList = <AllVersionClassListResponseModel>[].obs;
   var englishClassList = <AllVersionClassListResponseModel>[].obs;
   var userRoleList = <UserRolesResponseModel>[].obs;
   var subjectList = <SubjectResponseModel>[].obs;
-  var errorMessage = ''.obs;
+  var userDetailsList = <UserDetailsResponseModel>[].obs;
+
+  // Selected IDs
   var selectedRoleIds = <String>[].obs;
   var selectedSubjectIds = <String>[].obs;
 
-
-  // Add a method to fetch all initial data at once
+  /// Fetch all necessary shared data (used in registration, filters, etc.)
   Future<void> fetchInitialData() async {
     await Future.wait([
       fetchVersions(),
       fetchBanglaClasses(),
       fetchEnglishClasses(),
       fetchSubjectList(),
-      fetchUserRoleList()
+      fetchUserRoleList(),
     ]);
   }
 
@@ -105,5 +113,41 @@ Future<void> fetchUserRoleList() async {
       (element) => element.id == id,
       orElse: () => AllVersionClassListResponseModel(id: '', className: 'Unknown'),
     ).className;
+  }
+
+
+  /// Fetch user details by ID
+  Future<void> fetchUserDetails(String userId) async {
+    try {
+      isLoading.value = true;
+      error.value = null;
+
+      final result = await _service.getUserDetails(userId);
+      userDetailsList.assignAll(result);
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+    Future<void> updatePassword({
+    required String userId,
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    isLoading.value = true;
+    errorMessage.value = '';
+    successMessage.value = '';
+
+    try {
+      final result = await _service.updatePassword(userId, oldPassword, newPassword);
+      successMessage.value = result;
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

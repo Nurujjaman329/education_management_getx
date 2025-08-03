@@ -261,7 +261,7 @@ class _StudentHomeViewState extends State<StudentHomeView> {
                 SizedBox(
                   height: 200,
                   child: SfCircularChart(
-                    palette: [
+                    palette: const [
                       AppColors.success,
                       AppColors.secondary,
                       AppColors.primary,
@@ -499,7 +499,7 @@ class _StudentHomeViewState extends State<StudentHomeView> {
                 },
               ),
             );
-          }).toList(),
+          }),
       ],
     );
   }

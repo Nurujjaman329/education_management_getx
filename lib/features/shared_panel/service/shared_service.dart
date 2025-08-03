@@ -1,9 +1,11 @@
 import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:edex_365_getx/core/error/exceptions.dart';
 import 'package:edex_365_getx/core/network/dio_client.dart';
 import 'package:edex_365_getx/features/shared_panel/model/all_version_class_list_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/subject_response_model.dart';
+import 'package:edex_365_getx/features/shared_panel/model/user_details_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/user_role_response_model.dart';
 import '../model/academy_version_list_response_model.dart';
 
@@ -109,6 +111,58 @@ class SharedService {
     } catch (e) {
       //log("Subject fetch error: $e");
       rethrow;
+    }
+  }
+
+
+    Future<List<UserDetailsResponseModel>> getUserDetails(String userId) async {
+    final String url = "/api/auth/s/User/$userId";
+
+    try {
+      log("Fetching user details for userId: $userId");
+      final response = await client.get(url);
+
+      log("Response Status Code: ${response.statusCode}");
+      log("Response Data: ${response.data}");
+      log("Request URI: ${response.realUri}");
+
+      if (response.statusCode == 200) {
+        final List<dynamic> body = response.data;
+        return body.map((e) => UserDetailsResponseModel.fromJson(e)).toList();
+      } else if (response.statusCode == 404) {
+        throw AuthException();
+      } else {
+        throw ServerException();
+      }
+    } catch (e) {
+      log("Error fetching user details: $e");
+      rethrow;
+    }
+  }
+
+
+    Future<String> updatePassword(String userId, String oldPassword, String newPassword) async {
+    try {
+      log('userId: $userId');
+      log('oldPassword: $oldPassword');
+      log('newPassword: $newPassword');
+
+      final response = await client.put(
+        '/api/Auth/s/UpdatePassword/?userId=$userId&oldPassWord=$oldPassword&newPassWord=$newPassword',
+      );
+
+      log("Uri --<> ${response.realUri}");
+      final responseData = response.data as String;
+      log('Response Data: $responseData');
+
+      if (responseData == "PassWord is Update....") {
+        return responseData;
+      } else {
+        throw InputException("Unexpected response: $responseData");
+      }
+    } catch (error) {
+      log('Error -> ${error.toString()}');
+      throw InputException("Failed to update password: ${error.toString()}");
     }
   }
 }
