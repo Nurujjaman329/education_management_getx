@@ -22,7 +22,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.register,
-      page: () => const RegistrationScreen(),
+      page: () => RegistrationView(),
       binding: AuthBinding(),
     ),
    GetPage(

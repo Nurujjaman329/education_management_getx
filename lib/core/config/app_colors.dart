@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Light Theme
-  static const primary = Color(0xFF3F51B5);
-  static const secondary = Color(0xFFFFB300);
-  static const background = Color(0xFFF5F5F5);
-  static const surface = Color(0xFFFFFFFF);
-  static const textPrimary = Color(0xFF212121);
-  static const textSecondary = Color(0xFF757575);
-  static const success = Color(0xFF4CAF50);
-  static const error = Color(0xFFD32F2F);
-  static const info = Color(0xFF0288D1);
-  static const disabled = Color(0xFFBDBDBD);
-  static const divider = Color(0xFFE0E0E0);
+  // Education Theme Colors
+  static const primary = Color(0xFF2E7D32); // Deep green for education
+  static const secondary = Color(0xFF1565C0); // Blue for complementary
+  static const background = Color(0xFFF9F9F9); // Light background
+  static const surface = Color(0xFFFFFFFF); // White for cards/fields
+  static const textPrimary = Color(0xFF263238); // Dark gray for text
+  static const textSecondary = Color(0xFF607D8B); // Light gray for secondary text
+  static const success = Color(0xFF388E3C); // Green for success
+  static const error = Color(0xFFD32F2F); // Red for errors
+  static const info = Color(0xFF1976D2); // Blue for info
+  static const disabled = Color(0xFFB0BEC5); // Light gray for disabled
+  static const divider = Color(0xFFCFD8DC); // Divider color
 
   // Dark Theme
   static const darkPrimary = Color(0xFF7986CB);

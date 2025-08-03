@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:edex_365_getx/core/error/exceptions.dart';
+import 'package:edex_365_getx/features/authentication/model/otp_verify_response_model.dart';
 import 'package:edex_365_getx/features/authentication/model/parameter_body/signup_request_body.dart';
 import '../../../core/network/dio_client.dart';
 import '../model/login_response.dart';
 import '../model/registration_response.dart';
+import 'dart:developer';
 
 class AuthService {
   final Dio _dio = DioClient.getInstance();
@@ -59,6 +64,30 @@ class AuthService {
       }
     } catch (e) {
       throw Exception("Registration API error: $e");
+    }
+  }
+
+    Future<OtpVerifyResponseModel> verifyOtp(String id, String otp) async {
+    try {
+      log('ID: $id');
+      log('OTP: $otp');
+
+      final response = await _dio.post(
+        '/api/Otp/s/VerifyOtp',
+        data: jsonEncode(<String, String>{'id': id, 'otp': otp}),
+      );
+
+      final responseData = response.data as String;
+      log('Response Data: $responseData');
+
+      if (responseData == "Verifyed Otp..") {
+        return OtpVerifyResponseModel(message: responseData);
+      } else {
+        throw InputException("Unexpected response: $responseData");
+      }
+    } catch (e) {
+      log('OTP Verify Error: $e');
+      throw InputException("Failed to verify OTP: ${e.toString()}");
     }
   }
 }

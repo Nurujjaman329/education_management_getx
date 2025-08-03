@@ -15,6 +15,9 @@ class SharedController extends GetxController {
   var userRoleList = <UserRolesResponseModel>[].obs;
   var subjectList = <SubjectResponseModel>[].obs;
   var errorMessage = ''.obs;
+  var selectedRoleIds = <String>[].obs;
+  var selectedSubjectIds = <String>[].obs;
+
 
   // Add a method to fetch all initial data at once
   Future<void> fetchInitialData() async {
@@ -22,9 +25,24 @@ class SharedController extends GetxController {
       fetchVersions(),
       fetchBanglaClasses(),
       fetchEnglishClasses(),
-      fetchSubjectList()
+      fetchSubjectList(),
+      fetchUserRoleList()
     ]);
   }
+
+
+Future<void> fetchUserRoleList() async {
+  try {
+    errorMessage.value = '';
+    final roles = await _service.fetchUserRoleList();
+    userRoleList.assignAll(roles);
+  } catch (e) {
+    errorMessage.value = 'Failed to fetch user roles';
+    userRoleList.clear();
+    rethrow;
+  }
+}
+
 
   Future<void> fetchVersions() async {
     try {

@@ -32,8 +32,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Student Panel')),
-      body: _pages[_selectedIndex],
+     // appBar: AppBar(title: const Text('Student Panel')),
+      body: SafeArea(child: _pages[_selectedIndex]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           authController.logout();
