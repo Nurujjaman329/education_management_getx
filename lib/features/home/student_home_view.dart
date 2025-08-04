@@ -2,7 +2,9 @@ import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
 import 'package:edex_365_getx/features/student_panel/model/student_problem_list_response_model.dart';
+import 'package:edex_365_getx/features/student_panel/view/student_pending_problem_list_view.dart';
 import 'package:edex_365_getx/features/student_panel/view/student_problem_list_view.dart';
+import 'package:edex_365_getx/features/student_panel/view/student_solved_problem_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:edex_365_getx/features/student_panel/controller/student_problem_list_controller.dart';
@@ -215,6 +217,10 @@ Widget _buildWelcomeHeader() {
               progress: controller.totalProblems.isNotEmpty
                   ? controller.solvedProblems.length / controller.totalProblems.length
                   : 0.0,
+               onTap: () => Get.to(() => const StudentSolvedProblemListView(),
+              transition: Transition.rightToLeft, // 👈 Animation type
+              duration: const Duration(milliseconds: 400), // 👈 Optional custom duration
+              ),
             ),
             _buildStatItem(
               title: "Pending",
@@ -224,6 +230,10 @@ Widget _buildWelcomeHeader() {
               progress: controller.totalProblems.isNotEmpty
                   ? controller.pendingProblems.length / controller.totalProblems.length
                   : 0.0,
+               onTap: () => Get.to(() => const StudentPendingProblemListView(),
+              transition: Transition.rightToLeft, // 👈 Animation type
+              duration: const Duration(milliseconds: 400), // 👈 Optional custom duration
+              ),
             ),
           ],
         ),

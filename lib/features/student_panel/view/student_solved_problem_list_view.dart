@@ -5,15 +5,15 @@ import 'package:edex_365_getx/features/student_panel/view/widget/problem_card.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class StudentProblemListView extends StatelessWidget {
-  const StudentProblemListView({super.key});
+class StudentSolvedProblemListView extends StatelessWidget {
+  const StudentSolvedProblemListView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<StudentProblemListController>();
 
     return Scaffold(
-     appBar: const CustomCurvedAppBar(title: "All Problem",showBackButton: true,),
+     appBar: const CustomCurvedAppBar(title: "Solved List",showBackButton: true,),
       body:Obx(() {
           if (controller.isLoading.value) {
             return const Center(
@@ -35,7 +35,7 @@ class StudentProblemListView extends StatelessWidget {
             );
           }
  
-          if (controller.totalProblems.isEmpty) {
+          if (controller.solvedProblems.isEmpty) {
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -59,10 +59,10 @@ class StudentProblemListView extends StatelessWidget {
 
           return ListView.separated(
             padding: const EdgeInsets.all(16),
-            itemCount: controller.totalProblems.length,
+            itemCount: controller.solvedProblems.length,
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
-              final problem = controller.totalProblems[index];
+              final problem = controller.solvedProblems[index];
               return ProblemCard(problem: problem);
             },
           );
@@ -71,6 +71,3 @@ class StudentProblemListView extends StatelessWidget {
     );
   }
 }
-
-
-

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:edex_365_getx/core/error/exceptions.dart';
 import 'package:edex_365_getx/core/network/dio_client.dart';
 import 'package:edex_365_getx/features/shared_panel/model/all_version_class_list_response_model.dart';
+import 'package:edex_365_getx/features/shared_panel/model/problem_details_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/subject_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/update_user_info_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/user_details_response_model.dart';
@@ -195,5 +196,27 @@ class SharedService {
       throw ServerException();
     }
   }
+
+    Future<ProblemDetailsResponseModel> getProblemDetails(String subId) async {
+    try {
+      final response = await client.get('/api/ProblemsPost/s/ProblemDetails/$subId');
+
+      log("Request URL -> ${response.realUri}");
+      log("Response status: ${response.statusCode}");
+      log("Response body: ${response.data}");
+
+      if (response.statusCode == 200 && response.data != null) {
+        return ProblemDetailsResponseModel.fromJson(
+          response.data as Map<String, dynamic>,
+        );
+      } else {
+        throw InputException("Failed to fetch data.");
+      }
+    } catch (error) {
+      log("ProblemDetails Error: $error");
+      throw InputException("Failed to fetch data.");
+    }
+  }
+
 }
 
