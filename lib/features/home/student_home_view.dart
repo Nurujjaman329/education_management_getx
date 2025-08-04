@@ -1,5 +1,7 @@
 import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
+import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
+import 'package:edex_365_getx/features/student_panel/model/student_problem_list_response_model.dart';
 import 'package:edex_365_getx/features/student_panel/view/student_problem_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -76,19 +78,23 @@ class _StudentHomeViewState extends State<StudentHomeView> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // Welcome Header
+              // Enhanced Welcome Header with user name
               _buildWelcomeHeader(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
-              // Quick Stats Cards
+              // Quick Stats with improved layout
               _buildQuickStats(),
               const SizedBox(height: 24),
 
-              // Charts Section
+              // Learning Progress Section
+              _buildLearningProgress(),
+              const SizedBox(height: 24),
+
+              // Charts Section with better visualization
               _buildChartsSection(),
               const SizedBox(height: 24),
 
-              // Recent Problems
+              // Recent Problems with improved cards
               _buildRecentProblems(),
             ],
           ),
@@ -97,43 +103,65 @@ class _StudentHomeViewState extends State<StudentHomeView> {
     );
   }
 
-  Widget _buildWelcomeHeader() {
+Widget _buildWelcomeHeader() {
+  final sharedController = Get.find<SharedController>();
+
+  return Obx(() {
+    final user = sharedController.userDetailsList.firstOrNull;
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primary.withOpacity(0.8),
+            AppColors.secondary.withOpacity(0.9),
+          ],
+        ),
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: const Row(
+      child: Row(
         children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: AppColors.primary,
-            child: Icon(
-              Icons.person,
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.school,
               size: 30,
               color: Colors.white,
             ),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Welcome Back!",
-                  style: TextStyle(
+                  "Hello, ${user?.name ?? 'User'}!",
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 4),
-                Text(
-                  "Track your learning progress and problem solutions",
+                const SizedBox(height: 4),
+                const Text(
+                  "Ready to solve some problems today?",
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.textSecondary,
+                    color: Colors.white,
                   ),
                 ),
               ],
@@ -142,55 +170,62 @@ class _StudentHomeViewState extends State<StudentHomeView> {
         ],
       ),
     );
-  }
+  });
+}
+
 
   Widget _buildQuickStats() {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 3,
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      childAspectRatio: 0.8,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildStatItem(
-          title: "Total",
-          value: controller.totalProblems.length.toString(),
-          icon: Icons.assignment,
-          color: AppColors.primary,
-          onTap: () {
-            Navigator.of(context).push(
-              PageRouteBuilder(
-                pageBuilder: (_, __, ___) => const StudentProblemListView(),
-                transitionsBuilder: (_, animation, __, child) {
-                  const begin = Offset(1.0, 0.0); // Start from right
-                  const end = Offset.zero; // End at center
-                  const curve = Curves.easeInOut;
-
-                  final tween = Tween(begin: begin, end: end)
-                      .chain(CurveTween(curve: curve));
-                  final offsetAnimation = animation.drive(tween);
-
-                  return SlideTransition(
-                    position: offsetAnimation,
-                    child: child,
-                  );
-                },
+        const Text(
+          "Your Progress",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 12),
+        GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: 3,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 0.9,
+          children: [
+            _buildStatItem(
+              title: "Total",
+              value: controller.totalProblems.length.toString(),
+              icon: Icons.assignment,
+              color: AppColors.primary,
+              progress: 1.0,
+              onTap: () => Get.to(() => const StudentProblemListView(),
+              transition: Transition.rightToLeft, // 👈 Animation type
+              duration: const Duration(milliseconds: 400), // 👈 Optional custom duration
               ),
-            );
-          },
-        ),
-        _buildStatItem(
-          title: "Solved",
-          value: controller.solvedProblems.length.toString(),
-          icon: Icons.check_circle,
-          color: AppColors.success,
-        ),
-        _buildStatItem(
-          title: "Pending",
-          value: controller.pendingProblems.length.toString(),
-          icon: Icons.pending,
-          color: AppColors.secondary,
+              
+            ),
+            _buildStatItem(
+              title: "Solved",
+              value: controller.solvedProblems.length.toString(),
+              icon: Icons.check_circle,
+              color: AppColors.success,
+              progress: controller.totalProblems.isNotEmpty
+                  ? controller.solvedProblems.length / controller.totalProblems.length
+                  : 0.0,
+            ),
+            _buildStatItem(
+              title: "Pending",
+              value: controller.pendingProblems.length.toString(),
+              icon: Icons.pending_actions,
+              color: AppColors.secondary,
+              progress: controller.totalProblems.isNotEmpty
+                  ? controller.pendingProblems.length / controller.totalProblems.length
+                  : 0.0,
+            ),
+          ],
         ),
       ],
     );
@@ -201,13 +236,14 @@ class _StudentHomeViewState extends State<StudentHomeView> {
     required String value,
     required IconData icon,
     required Color color,
-    VoidCallback? onTap,
+    required double progress,
+     VoidCallback? onTap,
   }) {
     return GestureDetector(
-      onTap: onTap,
+        onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -220,23 +256,38 @@ class _StudentHomeViewState extends State<StudentHomeView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 24,
-                color: color,
-              ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: CircularProgressIndicator(
+                    value: progress,
+                    backgroundColor: color.withOpacity(0.1),
+                    color: color,
+                    strokeWidth: 6,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 20,
+                    color: color,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             Text(
               value,
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
@@ -255,6 +306,66 @@ class _StudentHomeViewState extends State<StudentHomeView> {
     );
   }
 
+  Widget _buildLearningProgress() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Learning Progress",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          LinearProgressIndicator(
+            value: controller.totalProblems.isNotEmpty
+                ? controller.solvedProblems.length / controller.totalProblems.length
+                : 0.0,
+            backgroundColor: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary,
+            minHeight: 12,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "${controller.totalProblems.isNotEmpty ? (controller.solvedProblems.length / controller.totalProblems.length * 100).toStringAsFixed(1) : 0}% Completed",
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              Text(
+                "${controller.solvedProblems.length} of ${controller.totalProblems.length} problems solved",
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildChartsSection() {
     final total = controller.totalProblems.length;
     final solved = controller.solvedProblems.length;
@@ -262,14 +373,24 @@ class _StudentHomeViewState extends State<StudentHomeView> {
     final others = total - solved - pending;
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Pie Chart
+        const Text(
+          "Performance Analytics",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 16),
         Card(
+          color: AppColors.surface, 
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(
-              color: AppColors.divider,
+            side: BorderSide(
+              color: AppColors.divider.withOpacity(0.5),
               width: 1,
             ),
           ),
@@ -282,7 +403,7 @@ class _StudentHomeViewState extends State<StudentHomeView> {
                   "Problem Distribution",
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -301,6 +422,7 @@ class _StudentHomeViewState extends State<StudentHomeView> {
                       textStyle: TextStyle(
                         color: AppColors.textSecondary,
                       ),
+                      overflowMode: LegendItemOverflowMode.wrap,
                     ),
                     series: <CircularSeries>[
                       PieSeries<ChartData, String>(
@@ -315,77 +437,9 @@ class _StudentHomeViewState extends State<StudentHomeView> {
                         dataLabelSettings: const DataLabelSettings(
                           isVisible: true,
                           labelPosition: ChartDataLabelPosition.inside,
-                          textStyle:
-                              TextStyle(color: Colors.white, fontSize: 12),
+                          textStyle: TextStyle(color: Colors.white, fontSize: 12),
                         ),
                         enableTooltip: true,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        // Bar Chart
-        Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(
-              color: AppColors.divider,
-              width: 1,
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Problem Overview",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 200,
-                  child: SfCartesianChart(
-                    primaryXAxis: const CategoryAxis(
-                      labelStyle: TextStyle(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    primaryYAxis: NumericAxis(
-                      minimum: 0,
-                      maximum: controller.totalProblems.length.toDouble() + 2,
-                      interval: 1,
-                      labelStyle: const TextStyle(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    tooltipBehavior: TooltipBehavior(enable: true),
-                    series: <CartesianSeries<ChartData, String>>[
-                      ColumnSeries<ChartData, String>(
-                        dataSource: [
-                          ChartData('Total', total, AppColors.primary),
-                          ChartData('Solved', solved, AppColors.success),
-                          ChartData('Pending', pending, AppColors.secondary),
-                        ],
-                        xValueMapper: (ChartData data, _) => data.category,
-                        yValueMapper: (ChartData data, _) => data.value,
-                        color: AppColors.primary,
-                        pointColorMapper: (ChartData data, _) => data.color,
-                        dataLabelSettings: const DataLabelSettings(
-                          isVisible: true,
-                          labelAlignment: ChartDataLabelAlignment.top,
-                          textStyle: TextStyle(fontSize: 12),
-                        ),
                       ),
                     ],
                   ),
@@ -415,122 +469,161 @@ class _StudentHomeViewState extends State<StudentHomeView> {
             ),
             if (controller.totalProblems.length > 3)
               TextButton(
-                onPressed: () {},
-                child: const Text(
-                  "View All",
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                onPressed: () {
+                  Get.to(() => const StudentProblemListView(),
+                  transition: Transition.downToUp,
+                  duration: const Duration(milliseconds: 400)
+                  );
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.primary,
                 ),
+                child: const Text("View All"),
               ),
           ],
         ),
         const SizedBox(height: 12),
         if (controller.totalProblems.isEmpty)
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Center(
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.assignment,
-                    size: 48,
-                    color: AppColors.textSecondary,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    "No problems submitted yet",
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
+          _buildEmptyState()
         else
           ...controller.totalProblems.take(3).map((item) {
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+            return _buildProblemCard(item);
+          }),
+      ],
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Center(
+        child: Column(
+          children: [
+            Icon(
+              Icons.assignment_outlined,
+              size: 48,
+              color: AppColors.textSecondary.withOpacity(0.5),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "No problems submitted yet",
+              style: TextStyle(
+                color: AppColors.textSecondary,
               ),
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(16),
-                leading: Container(
-                  width: 8,
-                  height: 8,
-                  margin: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: controller.pendingProblems.contains(item)
-                        ? AppColors.secondary
-                        : controller.solvedProblems.contains(item)
-                            ? AppColors.success
-                            : Colors.grey,
-                    shape: BoxShape.circle,
-                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Start by submitting your first problem",
+              style: TextStyle(
+                fontSize: 12,
+                color: AppColors.textSecondary.withOpacity(0.7),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // Navigate to problem submission
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                title: Text(
-                  item.subject,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+              child: const Text(
+                "Submit Problem",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProblemCard(StudentProblemListResponseModel problem) {
+    final isSolved = controller.solvedProblems.contains(problem);
+    final isPending = controller.pendingProblems.contains(problem);
+
+    return Card(
+      color: AppColors.surface,
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: AppColors.divider.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {
+          // Handle problem tap
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                margin: const EdgeInsets.only(right: 12),
+                decoration: BoxDecoration(
+                  color: isPending
+                      ? AppColors.secondary
+                      : isSolved
+                          ? AppColors.success
+                          : Colors.grey,
+                  shape: BoxShape.circle,
                 ),
-                subtitle: Column(
+              ),
+              Expanded(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 4),
                     Text(
-                      "Topic: ${item.topic}",
+                      problem.subject,
                       style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: AppColors.textPrimary,
                       ),
                     ),
+                    const SizedBox(height: 4),
                     Text(
-                      "Class: ${item.sClass}",
+                      problem.topic,
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 14,
                         color: AppColors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      item.description,
+                      problem.description,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color: AppColors.textSecondary.withOpacity(0.8),
                       ),
                     ),
                   ],
                 ),
-                trailing: const Icon(
-                  Icons.chevron_right,
-                  color: AppColors.textSecondary,
-                ),
-                onTap: () {
-                  // Handle problem tap
-                },
               ),
-            );
-          }),
-      ],
+              const Icon(
+                Icons.chevron_right,
+                color: AppColors.textSecondary,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

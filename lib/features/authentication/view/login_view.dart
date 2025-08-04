@@ -3,14 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/auth_controller.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final mobileController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  bool _obscureText = true;
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
+  @override
+  void dispose() {
+    mobileController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AuthController>();
-    final mobileController = TextEditingController();
-    final passwordController = TextEditingController();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -50,7 +71,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 48),
-              
+
               // Mobile Number Field
               const Text(
                 'Mobile Number',
@@ -85,7 +106,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              
+
               // Password Field
               const Text(
                 'Password',
@@ -109,7 +130,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 child: TextField(
                   controller: passwordController,
-                  obscureText: true,
+                  obscureText: _obscureText,
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -117,14 +138,17 @@ class LoginScreen extends StatelessWidget {
                     hintText: 'Enter your password',
                     hintStyle: const TextStyle(color: AppColors.disabled),
                     suffixIcon: IconButton(
-                      icon: const Icon(Icons.visibility_outlined, color: AppColors.textSecondary),
-                      onPressed: () {},
+                      icon: Icon(
+                        _obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                        color: AppColors.textSecondary,
+                      ),
+                      onPressed: _togglePasswordVisibility,
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Forgot Password
               Align(
                 alignment: Alignment.centerRight,
@@ -140,7 +164,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              
+
               // Login Button
               Obx(() => controller.isLoading.value
                   ? const Center(child: CircularProgressIndicator())
@@ -176,7 +200,7 @@ class LoginScreen extends StatelessWidget {
                     ),
               ),
               const SizedBox(height: 24),
-              
+
               // Divider
               const Row(
                 children: [
@@ -194,7 +218,7 @@ class LoginScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 24),
-              
+
               // Register Button
               Center(
                 child: TextButton(
@@ -225,4 +249,5 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
+
 

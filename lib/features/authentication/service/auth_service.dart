@@ -12,27 +12,42 @@ import 'dart:developer';
 class AuthService {
   final Dio _dio = DioClient.getInstance();
 
-  Future<LoginResponse> login({
-    required String mobileNo,
-    required String password,
-    required String deviceToken,
-  }) async {
-    try {
-      final response = await _dio.post('/api/Auth/Login', data: {
-        'mobileNo': mobileNo,
-        'password': password,
-        'deviceToken': deviceToken,
-      });
+Future<LoginResponse> login({
+  required String mobileNo,
+  required String password,
+  required String deviceToken,
+}) async {
+  try {
+    final response = await _dio.post('/api/Auth/Login', data: {
+      'mobileNo': mobileNo,
+      'password': password,
+      'deviceToken': deviceToken,
+    });
 
-      if (response.statusCode == 200) {
-        return LoginResponse.fromJson(response.data);
-      } else {
-        throw Exception(response.data['message'] ?? 'Login failed');
-      }
-    } catch (e) {
-      throw Exception("Login API error: $e");
+    if (response.statusCode == 200) {
+      return LoginResponse.fromJson(response.data);
+    } else {
+      throw Exception(response.data['message'] ?? 'Login failed');
     }
+  } on DioException catch (e) {
+    // Handle known server errors with user-friendly messages
+    final statusCode = e.response?.statusCode;
+    final serverMessage = e.response?.data['message'];
+
+    if (statusCode == 500) {
+      throw Exception('Server error. Please try again later.');
+    } else if (statusCode == 401) {
+      throw Exception(serverMessage ?? 'Invalid credentials.');
+    } else if (statusCode == 400) {
+      throw Exception(serverMessage ?? 'Bad request. Please check your input.');
+    } else {
+      throw Exception(serverMessage ?? 'Something went wrong. Please try again.');
+    }
+  } catch (e) {
+    throw Exception("Unexpected login error: ${e.toString()}");
   }
+}
+
 
   Future<RegistrationResponseModel> register(SignUpRequestBody body) async {
     try {

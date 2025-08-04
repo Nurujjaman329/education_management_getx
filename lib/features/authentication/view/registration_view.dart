@@ -13,7 +13,7 @@ class RegistrationView extends StatefulWidget {
   static void navigate(BuildContext context) {
     Navigator.of(context).push(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => RegistrationView(),
+        pageBuilder: (context, animation, secondaryAnimation) => const RegistrationView(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
@@ -36,6 +36,7 @@ class _RegistrationViewState extends State<RegistrationView> {
   final AuthController controller = Get.find<AuthController>();
   final _formKey = GlobalKey<FormState>();
   String? selectedRoleId;
+  bool isTeacher = false;
 
   @override
   void dispose() {
@@ -49,215 +50,298 @@ class _RegistrationViewState extends State<RegistrationView> {
       body: Obx(() {
         return Stack(
           children: [
-            // Background Decoration
-            Positioned(
-              top: -50,
-              right: -50,
+            // Background Decoration with improved gradient
+            Positioned.fill(
               child: Container(
-                width: 200,
-                height: 200,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [
+                      AppColors.background.withOpacity(0.05),
+                      AppColors.background.withOpacity(0.8),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            
+            // Floating bubbles decoration
+            Positioned(
+              top: 100,
+              right: -30,
+              child: Container(
+                width: 100,
+                height: 100,
                 decoration: BoxDecoration(
                   color: AppColors.primary.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
               ),
             ),
+            Positioned(
+              bottom: 50,
+              left: -30,
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  color: AppColors.secondary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
             
             SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 60),
-                      
-                      // Header
-                      Center(
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/images/edu_logo.png',
-                              height: 70,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Create Account',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Join our learning community',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 40),
-                      
-                      // Personal Info Section
-                      _buildSectionHeader('Personal Information'),
-                      _buildTextField(
-                        'Full Name',
-                        controller.nameController,
-                        icon: Icons.person_outline,
-                        validator: (value) => value?.isEmpty ?? true ? 'Please enter your name' : null,
-                      ),
-                      _buildTextField(
-                        'Mobile Number',
-                        controller.mobileController,
-                        icon: Icons.phone_android,
-                        keyboard: TextInputType.phone,
-                        validator: (value) {
-                          if (value?.isEmpty ?? true) return 'Please enter mobile number';
-                          if (value!.length != 10) return 'Mobile number must be 10 digits';
-                          return null;
-                        },
-                      ),
-                      _buildTextField(
-                        'Email Address',
-                        controller.emailController,
-                        icon: Icons.email_outlined,
-                        keyboard: TextInputType.emailAddress,
-                        validator: (value) {
-                          if (value?.isEmpty ?? true) return 'Please enter email';
-                          if (!value!.contains('@')) return 'Please enter a valid email';
-                          return null;
-                        },
-                      ),
-                      _buildTextField(
-                        'Password',
-                        controller.passwordController,
-                        icon: Icons.lock_outline,
-                        isObscure: true,
-                        validator: (value) {
-                          if (value?.isEmpty ?? true) return 'Please enter password';
-                          if (value!.length < 6) return 'Password must be at least 6 characters';
-                          return null;
-                        },
-                      ),
-                      _buildDOBField(),
-                      const SizedBox(height: 24),
-                      
-                      // Documents Section
-                      _buildSectionHeader('Documents'),
-                      _buildFilePicker(
-                        label: 'Profile Photo',
-                        file: controller.image.value,
-                        onTap: controller.pickImage,
-                        isRequired: true,
-                        icon: Icons.camera_alt,
-                      ),
-                      _buildFilePicker(
-                        label: 'CV (Optional)',
-                        file: controller.cv.value,
-                        onTap: controller.pickCV,
-                        isRequired: false,
-                        icon: Icons.description,
-                      ),
-                      _buildFilePicker(
-                        label: 'Academic Certificate (Optional)',
-                        file: controller.academicImage.value,
-                        onTap: controller.pickAcademicImage,
-                        isRequired: false,
-                        icon: Icons.school,
-                      ),
-                      const SizedBox(height: 24),
-                      
-                      // Subjects Section
-                      _buildSectionHeader('Subjects'),
-                      _buildSubjects(),
-                      const SizedBox(height: 24),
-                      
-                      // Role Selection (Single Select)
-                      _buildSectionHeader('Select Your Role'),
-                      _buildRoleSelection(),
-                      const SizedBox(height: 30),
-                      
-                      // Submit Button
-                      controller.isLoading.value
-                          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-                          : SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  if (_formKey.currentState?.validate() ?? false) {
-                                    if (controller.image.value == null) {
-                                      Get.snackbar('Error', 'Profile image is required');
-                                      return;
-                                    }
-                                    if (selectedRoleId == null) {
-                                      Get.snackbar('Error', 'Please select a role');
-                                      return;
-                                    }
-                                    controller.submit();
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  padding: const EdgeInsets.symmetric(vertical: 18),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                child: const Text(
-                                  "Create Account",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                      const SizedBox(height: 16),
-                      
-                      // Error Message
-                      if (controller.errorMessage.isNotEmpty)
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        
+                        // Header with improved design
                         Center(
-                          child: Text(
-                            controller.errorMessage.value,
-                            style: TextStyle(
-                              color: AppColors.error,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Image.asset(
+                                  'assets/images/edu_logo.png',
+                                  height: 50,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              const Text(
+                                'Create Account',
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                'Join our learning community',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      const SizedBox(height: 24),
-                      
-                      // Login Link
-                      Center(
-                        child: GestureDetector(
-                          onTap: () => Get.toNamed(AppRoutes.login),
-                          child: RichText(
-                            text: TextSpan(
-                              text: "Already have an account? ",
-                              style: TextStyle(color: AppColors.textSecondary),
-                              children: [
-                                TextSpan(
-                                  text: "Login",
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.bold,
-                                    decoration: TextDecoration.underline,
+                        const SizedBox(height: 32),
+                        
+                        // Personal Info Section with improved cards
+                        _buildSectionHeader('Personal Information', Icons.person),
+                        _buildTextFieldCard(
+                          'Full Name',
+                          controller.nameController,
+                          icon: Icons.person_outline,
+                          validator: (value) => value?.isEmpty ?? true ? 'Please enter your name' : null,
+                        ),
+                        _buildTextFieldCard(
+                          'Mobile Number',
+                          controller.mobileController,
+                          icon: Icons.phone_android,
+                          keyboard: TextInputType.phone,
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) return 'Please enter mobile number';
+                            if (value!.length != 10) return 'Mobile number must be 10 digits';
+                            return null;
+                          },
+                        ),
+                        _buildTextFieldCard(
+                          'Email Address',
+                          controller.emailController,
+                          icon: Icons.email_outlined,
+                          keyboard: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) return 'Please enter email';
+                            if (!value!.contains('@')) return 'Please enter a valid email';
+                            return null;
+                          },
+                        ),
+                        _buildTextFieldCard(
+                          'Password',
+                          controller.passwordController,
+                          icon: Icons.lock_outline,
+                          isObscure: true,
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) return 'Please enter password';
+                            if (value!.length < 6) return 'Password must be at least 6 characters';
+                            return null;
+                          },
+                        ),
+                        _buildDOBField(),
+                        const SizedBox(height: 24),
+                        
+                        // Role Selection (Single Select) moved up
+                        _buildSectionHeader('Select Your Role', Icons.school),
+                        _buildRoleSelection(),
+                        const SizedBox(height: 24),
+                        
+                        // Only show documents section if teacher is selected
+                        if (isTeacher) ...[
+                          _buildSectionHeader('Professional Documents', Icons.folder),
+                          _buildFilePickerCard(
+                            label: 'Profile Photo',
+                            file: controller.image.value,
+                            onTap: controller.pickImage,
+                            isRequired: true,
+                            icon: Icons.camera_alt,
+                          ),
+                          _buildFilePickerCard(
+                            label: 'CV (Required for Teachers)',
+                            file: controller.cv.value,
+                            onTap: controller.pickCV,
+                            isRequired: true,
+                            icon: Icons.description,
+                          ),
+                          _buildFilePickerCard(
+                            label: 'Academic Certificates',
+                            file: controller.academicImage.value,
+                            onTap: controller.pickAcademicImage,
+                            isRequired: true,
+                            icon: Icons.school,
+                          ),
+                          const SizedBox(height: 24),
+                        ] else ...[
+                          // For students, only show profile photo
+                          _buildSectionHeader('Profile Photo', Icons.camera_alt),
+                          _buildFilePickerCard(
+                            label: 'Profile Photo',
+                            file: controller.image.value,
+                            onTap: controller.pickImage,
+                            isRequired: true,
+                            icon: Icons.camera_alt,
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                        
+                        // Subjects Section
+                        _buildSectionHeader('Subjects of Interest', Icons.subject),
+                        _buildSubjects(),
+                        const SizedBox(height: 30),
+                        
+                        // Submit Button with improved design
+                        controller.isLoading.value
+                            ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                            : SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (_formKey.currentState?.validate() ?? false) {
+                                      if (controller.image.value == null) {
+                                        Get.snackbar(
+                                          'Profile Image Required',
+                                          'Please upload your profile photo',
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: AppColors.error,
+                                          colorText: Colors.white,
+                                        );
+                                        return;
+                                      }
+                                      if (isTeacher && controller.cv.value == null) {
+                                        Get.snackbar(
+                                          'CV Required',
+                                          'Please upload your CV',
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: AppColors.error,
+                                          colorText: Colors.white,
+                                        );
+                                        return;
+                                      }
+                                      if (selectedRoleId == null) {
+                                        Get.snackbar(
+                                          'Role Required',
+                                          'Please select your role',
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          backgroundColor: AppColors.error,
+                                          colorText: Colors.white,
+                                        );
+                                        return;
+                                      }
+                                      controller.submit();
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primary,
+                                    padding: const EdgeInsets.symmetric(vertical: 18),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 2,
+                                    shadowColor: AppColors.primary.withOpacity(0.3),
+                                  ),
+                                  child: const Text(
+                                    "Create Account",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ],
+                              ),
+                        const SizedBox(height: 16),
+                        
+                        // Error Message with improved visibility
+                        if (controller.errorMessage.isNotEmpty)
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.error.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              controller.errorMessage.value,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: AppColors.error,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 24),
+                        
+                        // Login Link with improved design
+                        Center(
+                          child: GestureDetector(
+                            onTap: () => Get.toNamed(AppRoutes.login),
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              child: RichText(
+                                text: const TextSpan(
+                                  text: "Already have an account? ",
+                                  style: TextStyle(color: AppColors.textSecondary),
+                                  children: [
+                                    TextSpan(
+                                      text: "Login",
+                                      style: TextStyle(
+                                        color: AppColors.primary,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 40),
-                    ],
+                        const SizedBox(height: 40),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -268,105 +352,19 @@ class _RegistrationViewState extends State<RegistrationView> {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, IconData icon) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: AppColors.primary,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(
-    String label,
-    TextEditingController controller, {
-    IconData? icon,
-    TextInputType keyboard = TextInputType.text,
-    bool isObscure = false,
-    String? Function(String?)? validator,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextFormField(
-        controller: controller,
-        obscureText: isObscure && !this.controller.showPassword.value,
-        keyboardType: keyboard,
-        style: TextStyle(color: AppColors.textPrimary),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(color: AppColors.textSecondary),
-          filled: true,
-          fillColor: AppColors.surface,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          prefixIcon: icon != null ? Icon(icon, color: AppColors.primary) : null,
-          suffixIcon: isObscure
-              ? Obx(() => IconButton(
-                    icon: Icon(
-                      this.controller.showPassword.value
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: AppColors.textSecondary,
-                    ),
-                    onPressed: () => this.controller.showPassword.toggle(),
-                  ))
-              : null,
-        ),
-        validator: validator,
-      ),
-    );
-  }
-
-  Widget _buildFilePicker({
-    required String label,
-    required File? file,
-    required VoidCallback onTap,
-    required bool isRequired,
-    required IconData icon,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Text(label, style: TextStyle(fontWeight: FontWeight.w500)),
-              if (isRequired) const Text(' *', style: TextStyle(color: Colors.red)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Icon(icon, color: AppColors.primary),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      file != null ? file.path.split('/').last : 'Tap to select file',
-                      style: TextStyle(
-                        color: file != null ? AppColors.textPrimary : AppColors.textSecondary,
-                      ),
-                    ),
-                  ),
-                  if (file != null) Icon(Icons.check_circle, color: AppColors.success),
-                ],
-              ),
+          Icon(icon, size: 20, color: AppColors.primary),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primary,
             ),
           ),
         ],
@@ -374,21 +372,155 @@ class _RegistrationViewState extends State<RegistrationView> {
     );
   }
 
+  Widget _buildTextFieldCard(
+    String label,
+    TextEditingController controller, {
+    IconData? icon,
+    TextInputType keyboard = TextInputType.text,
+    bool isObscure = false,
+    String? Function(String?)? validator,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: AppColors.divider.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: TextFormField(
+          controller: controller,
+          obscureText: isObscure && !this.controller.showPassword.value,
+          keyboardType: keyboard,
+          style: const TextStyle(color: AppColors.textPrimary),
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: const TextStyle(color: AppColors.textSecondary),
+            border: InputBorder.none,
+            prefixIcon: icon != null ? Icon(icon, color: AppColors.primary) : null,
+            suffixIcon: isObscure
+                ? Obx(() => IconButton(
+                      icon: Icon(
+                        this.controller.showPassword.value
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: AppColors.textSecondary,
+                      ),
+                      onPressed: () => this.controller.showPassword.toggle(),
+                    ))
+                : null,
+          ),
+          validator: validator,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilePickerCard({
+    required String label,
+    required File? file,
+    required VoidCallback onTap,
+    required bool isRequired,
+    required IconData icon,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: AppColors.divider.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, size: 20, color: AppColors.primary),
+                  const SizedBox(width: 8),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  if (isRequired) 
+                    const Padding(
+                      padding: EdgeInsets.only(left: 4),
+                      child: Text(
+                        '*',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        file != null 
+                            ? file.path.split('/').last 
+                            : 'Tap to select file',
+                        style: TextStyle(
+                          color: file != null 
+                              ? AppColors.textPrimary 
+                              : AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                    if (file != null) 
+                      Icon(Icons.check_circle, color: AppColors.success),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildDOBField() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: AppColors.divider.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
       child: InkWell(
         onTap: controller.pickDOB,
         borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(12),
-          ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              Icon(Icons.calendar_today, color: AppColors.primary),
+              const Icon(Icons.calendar_today, color: AppColors.primary),
               const SizedBox(width: 16),
               Obx(() => Text(
                     controller.dob.value != null
@@ -417,7 +549,7 @@ class _RegistrationViewState extends State<RegistrationView> {
         runSpacing: 8,
         children: subjects.map((subject) {
           final isSelected = selected.contains(subject.id);
-          return ChoiceChip(
+          return FilterChip(
             label: Text(subject.subjectName),
             selected: isSelected,
             onSelected: (selected) {
@@ -427,14 +559,22 @@ class _RegistrationViewState extends State<RegistrationView> {
                 controller.subjectController.selectedSubjectIds.remove(subject.id);
               }
             },
-            selectedColor: AppColors.primary,
+            selectedColor: AppColors.primary.withOpacity(0.2),
             backgroundColor: AppColors.surface,
             labelStyle: TextStyle(
-              color: isSelected ? Colors.white : AppColors.textPrimary,
+              color: isSelected ? AppColors.primary : AppColors.textPrimary,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
+              side: BorderSide(
+                color: isSelected 
+                    ? AppColors.primary 
+                    : AppColors.divider,
+              ),
             ),
+            checkmarkColor: AppColors.primary,
+            showCheckmark: true,
           );
         }).toList(),
       );
@@ -454,6 +594,7 @@ class _RegistrationViewState extends State<RegistrationView> {
               onTap: () {
                 setState(() {
                   selectedRoleId = role.id;
+                  isTeacher = role.name.toLowerCase().contains('teacher');
                   controller.roleController.selectedRoleIds.value = [role.id];
                 });
               },
@@ -474,17 +615,52 @@ class _RegistrationViewState extends State<RegistrationView> {
                 ),
                 child: Row(
                   children: [
-                    Icon(
-                      isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                    Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isSelected ? AppColors.primary : Colors.transparent,
+                        border: Border.all(
+                          color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                          width: 2,
+                        ),
+                      ),
+                      child: isSelected
+                          ? const Icon(Icons.check, size: 14, color: Colors.white)
+                          : null,
                     ),
                     const SizedBox(width: 16),
-                    Text(
-                      role.name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textPrimary,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            role.name,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                              fontSize: 16,
+                            ),
+                          ),
+                          ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            role.name,
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                        ],
                       ),
+                    ),
+                    Icon(
+                      role.name.toLowerCase().contains('teacher')
+                          ? Icons.school
+                          : Icons.school_outlined,
+                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
                     ),
                   ],
                 ),

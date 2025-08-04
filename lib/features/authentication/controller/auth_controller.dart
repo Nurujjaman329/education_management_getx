@@ -1,5 +1,7 @@
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:edex_365_getx/core/error/exceptions.dart';
 import 'package:edex_365_getx/features/authentication/model/login_response.dart';
 import 'package:edex_365_getx/features/authentication/model/parameter_body/signup_request_body.dart';
@@ -68,44 +70,71 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> login(String mobileNo, String password) async {
-    try {
-      isLoading.value = true;
-      const deviceToken = 'static_device_token_123';
+Future<void> login(String mobileNo, String password) async {
+  try {
+    isLoading.value = true;
+    const deviceToken = 'static_device_token_123';
 
-      final response = await _service.login(
-        mobileNo: mobileNo,
-        password: password,
-        deviceToken: deviceToken,
-      );
+    final response = await _service.login(
+      mobileNo: mobileNo,
+      password: password,
+      deviceToken: deviceToken,
+    );
 
-      loginResponse.value = response;
-      userId.value = response.id; // Store the user ID from response
+    loginResponse.value = response;
+    userId.value = response.id;
 
-      // Save token & type
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', response.token);
-      await prefs.setString('userType', response.type);
-      await prefs.setString('userId', response.id); // Save user ID to shared preferences
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', response.token);
+    await prefs.setString('userType', response.type);
+    await prefs.setString('userId', response.id);
 
-      print('Login successful: ${response.token}, ${response.type}');
+    log('Login successful: ${response.token}, ${response.type}');
 
-      final userType = response.type.toLowerCase();
+    final userType = response.type.toLowerCase();
 
-      if (userType == 'student') {
-        Get.offAllNamed(AppRoutes.studentHome);
-      } else if (userType == 'teacher') {
-        Get.offAllNamed(AppRoutes.teacherHome);
-      } else {
-        Get.snackbar("Error", "Invalid user type");
-      }
-    } catch (e) {
-      print('Login error: $e');
-      Get.snackbar("Login Failed", e.toString());
-    } finally {
-      isLoading.value = false;
+    if (userType == 'student') {
+      Get.offAllNamed(AppRoutes.studentHome);
+    } else if (userType == 'teacher') {
+      Get.offAllNamed(AppRoutes.teacherHome);
+    } else {
+      Get.snackbar("Error", "Invalid user type");
     }
+  } catch (e) {
+    log('Login error: $e');
+
+    String errorMessage = "An unexpected error occurred. Please try again.";
+
+    if (e is DioException) {
+      final statusCode = e.response?.statusCode;
+      final serverMessage = e.response?.data['message'] ?? '';
+
+      if (statusCode == 500) {
+        errorMessage = "Server error. Please try again later.";
+      } else if (statusCode == 401) {
+        errorMessage = serverMessage.isNotEmpty ? serverMessage : "Unauthorized. Check your credentials.";
+      } else if (statusCode == 400) {
+        errorMessage = serverMessage.isNotEmpty ? serverMessage : "Invalid request data.";
+      } else {
+        errorMessage = serverMessage.isNotEmpty ? serverMessage : "Something went wrong. Please try again.";
+      }
+    } else if (e is Exception) {
+      // Clean up generic exception message if needed
+      errorMessage = e.toString().replaceFirst('Exception: ', '');
+    }
+
+    Get.snackbar(
+      "Login Failed",
+      errorMessage,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.redAccent,
+      colorText: Colors.white,
+    );
+  } finally {
+    isLoading.value = false;
   }
+}
+
 
     // Add this method to get userId from shared preferences when app starts
   Future<void> loadUserData() async {
