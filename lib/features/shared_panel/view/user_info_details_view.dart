@@ -17,7 +17,7 @@ class UserInfoDetailsView extends StatelessWidget {
       appBar: const CustomCurvedAppBar(title: "User Profile"),
       backgroundColor: AppColors.background,
       body: user == null
-          ? Center(
+          ? const Center(
               child: Text(
                 "No user data found",
                 style: TextStyle(
@@ -126,7 +126,7 @@ class UserInfoDetailsView extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             user.email,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               color: AppColors.textSecondary,
             ),
@@ -139,7 +139,7 @@ class UserInfoDetailsView extends StatelessWidget {
   Widget _buildDefaultAvatar() {
     return Container(
       color: AppColors.primary.withOpacity(0.1),
-      child: Center(
+      child: const Center(
         child: Icon(
           Icons.person,
           size: 48,
@@ -157,7 +157,7 @@ class UserInfoDetailsView extends StatelessWidget {
           width: 100,
           child: Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               color: AppColors.textSecondary,
               fontWeight: FontWeight.w500,

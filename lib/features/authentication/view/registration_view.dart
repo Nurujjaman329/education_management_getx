@@ -491,7 +491,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                       ),
                     ),
                     if (file != null) 
-                      Icon(Icons.check_circle, color: AppColors.success),
+                      const Icon(Icons.check_circle, color: AppColors.success),
                   ],
                 ),
               ),
@@ -637,7 +637,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                         children: [
                           Text(
                             role.name,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary,
                               fontSize: 16,
@@ -647,7 +647,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                           const SizedBox(height: 4),
                           Text(
                             role.name,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 12,
                             ),

@@ -35,7 +35,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages = [
+    final List<Widget> pages = [
       const StudentHomeView(),
       ProblemPostView(),
       TransactionHistoryView(userId: authController.userId.value),
@@ -65,7 +65,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
               ),
             )
           : null,
-      body: SafeArea(child: _pages[_selectedIndex]),
+      body: SafeArea(child: pages[_selectedIndex]),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.background,

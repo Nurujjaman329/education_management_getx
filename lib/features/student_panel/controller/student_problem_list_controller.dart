@@ -1,4 +1,6 @@
 // lib/features/student_panel/controllers/student_problem_list_controller.dart
+import 'dart:developer';
+
 import 'package:edex_365_getx/features/shared_panel/model/problem_details_response_model.dart';
 import 'package:edex_365_getx/features/student_panel/model/student_problem_list_response_model.dart';
 import 'package:edex_365_getx/features/student_panel/service/student_problem_list_service.dart';
@@ -20,7 +22,7 @@ class StudentProblemListController extends GetxController {
 
   /// Fetches all problem lists in sequence (total, pending, solved)
   Future<void> fetchAll(String userId) async {
-    print('[DEBUG] fetchAll called with userId: $userId');
+    log('[DEBUG] fetchAll called with userId: $userId');
     try {
       isLoading.value = true;
       errorMessage.value = '';
@@ -32,10 +34,10 @@ class StudentProblemListController extends GetxController {
       totalProblems.assignAll(all);
       pendingProblems.assignAll(pending);
       solvedProblems.assignAll(solved);
-      print('[DEBUG] fetchAll completed. Total: \\${all.length}, Pending: \\${pending.length}, Solved: \\${solved.length}');
+      log('[DEBUG] fetchAll completed. Total: \\${all.length}, Pending: \\${pending.length}, Solved: \\${solved.length}');
     } catch (e) {
       errorMessage.value = 'Failed to fetch problems';
-      print('[DEBUG] fetchAll error: $e');
+      log('[DEBUG] fetchAll error: $e');
     } finally {
       isLoading.value = false;
     }
