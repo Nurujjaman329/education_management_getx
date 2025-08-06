@@ -1,11 +1,14 @@
+import 'dart:developer';
+
 import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/core/widgets/custom_curved_appbar.dart';
+import 'package:edex_365_getx/features/shared_panel/view/problem_details_view.dart';
 import 'package:edex_365_getx/features/student_panel/controller/student_problem_list_controller.dart';
 import 'package:edex_365_getx/features/student_panel/view/widget/problem_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class StudentPendingProblemListView extends StatelessWidget {
+class StudentPendingProblemListView extends StatelessWidget { 
   const StudentPendingProblemListView({super.key});
 
   @override
@@ -13,6 +16,7 @@ class StudentPendingProblemListView extends StatelessWidget {
     final controller = Get.find<StudentProblemListController>();
 
     return Scaffold(
+      backgroundColor: AppColors.background,
      appBar: const CustomCurvedAppBar(title: "Pending List",showBackButton: true,),
       body:Obx(() {
           if (controller.isLoading.value) {
@@ -58,14 +62,24 @@ class StudentPendingProblemListView extends StatelessWidget {
           }
 
           return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: controller.pendingProblems.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final problem = controller.pendingProblems[index];
-              return ProblemCard(problem: problem);
-            },
-          );
+          padding: const EdgeInsets.all(16),
+          itemCount: controller.pendingProblems.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          itemBuilder: (context, index) {
+            final problem = controller.pendingProblems[index];
+            return ProblemCard(
+              problem: problem,
+              onTap: () {
+                log("SubID --------------------- ${problem.id}");
+                Get.to(
+                  () => ProblemDetailsView(problemId: problem.id,showDiscussion: true,),
+                  transition: Transition.leftToRight,
+                  duration: const Duration(milliseconds: 400),
+                );
+              },
+            );
+          },
+        );
         }),
 
     );

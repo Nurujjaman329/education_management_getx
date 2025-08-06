@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:edex_365_getx/features/shared_panel/model/all_version_class_list_response_model.dart';
+import 'package:edex_365_getx/features/shared_panel/model/get_claim_message_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/problem_details_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/subject_response_model.dart';
 import 'package:edex_365_getx/features/shared_panel/model/update_user_info_response_model.dart';
@@ -13,9 +15,11 @@ class SharedController extends GetxController {
 
   // Observables
   var isLoading = false.obs;
+  var isSending = false.obs;
   var errorMessage = ''.obs;
   var successMessage = ''.obs;
   var error = Rxn<String>();
+  var responseMessage = ''.obs;
 
   // Lists
   var versionList = <AcademyVersionListResponseModel>[].obs;
@@ -26,13 +30,13 @@ class SharedController extends GetxController {
   var userDetailsList = <UserDetailsResponseModel>[].obs;
   var updatedUser = Rxn<UpdateUserInfoResponseModel>();
   var problemDetails = Rxn<ProblemDetailsResponseModel>();
-
+  var claimMessages = <GetClaimMessageResponseModel>[].obs;
 
   // Selected IDs
   var selectedRoleIds = <String>[].obs;
   var selectedSubjectIds = <String>[].obs;
 
-  /// Fetch all necessary shared data (used in registration, filters, etc.)
+  // Fetch all shared data used during registration, filters, etc.
   Future<void> fetchInitialData() async {
     await Future.wait([
       fetchVersions(),
@@ -40,24 +44,8 @@ class SharedController extends GetxController {
       fetchEnglishClasses(),
       fetchSubjectList(),
       fetchUserRoleList(),
-     // fetchProblemDetails(),
-     
     ]);
   }
-
-
-Future<void> fetchUserRoleList() async {
-  try {
-    errorMessage.value = '';
-    final roles = await _service.fetchUserRoleList();
-    userRoleList.assignAll(roles);
-  } catch (e) {
-    errorMessage.value = 'Failed to fetch user roles';
-    userRoleList.clear();
-    rethrow;
-  }
-}
-
 
   Future<void> fetchVersions() async {
     try {
@@ -66,7 +54,7 @@ Future<void> fetchUserRoleList() async {
       versionList.assignAll(versions);
     } catch (e) {
       errorMessage.value = 'Failed to fetch version list';
-      versionList.clear(); // Clear the list on error
+      versionList.clear();
       rethrow;
     }
   }
@@ -78,7 +66,7 @@ Future<void> fetchUserRoleList() async {
       banglaClassList.assignAll(classes);
     } catch (e) {
       errorMessage.value = 'Failed to fetch Bangla version classes';
-      banglaClassList.clear(); // Clear the list on error
+      banglaClassList.clear();
       rethrow;
     }
   }
@@ -90,7 +78,7 @@ Future<void> fetchUserRoleList() async {
       englishClassList.assignAll(classes);
     } catch (e) {
       errorMessage.value = 'Failed to fetch English version classes';
-      englishClassList.clear(); // Clear the list on error
+      englishClassList.clear();
       rethrow;
     }
   }
@@ -102,33 +90,47 @@ Future<void> fetchUserRoleList() async {
       subjectList.assignAll(subjects);
     } catch (e) {
       errorMessage.value = 'Failed to fetch subjects';
-      subjectList.clear(); // Clear the list on error
+      subjectList.clear();
       rethrow;
     }
   }
 
-  // Optional: Add helper methods to get class names by ID
+  Future<void> fetchUserRoleList() async {
+    try {
+      errorMessage.value = '';
+      final roles = await _service.fetchUserRoleList();
+      userRoleList.assignAll(roles);
+    } catch (e) {
+      errorMessage.value = 'Failed to fetch user roles';
+      userRoleList.clear();
+      rethrow;
+    }
+  }
+
   String getEnglishClassNameById(String id) {
-    return englishClassList.firstWhere(
-      (element) => element.id == id,
-      orElse: () => AllVersionClassListResponseModel(id: '', className: 'Unknown'),
-    ).className;
+    return englishClassList
+        .firstWhere(
+          (e) => e.id == id,
+          orElse: () =>
+              AllVersionClassListResponseModel(id: '', className: 'Unknown'),
+        )
+        .className;
   }
 
   String getBanglaClassNameById(String id) {
-    return banglaClassList.firstWhere(
-      (element) => element.id == id,
-      orElse: () => AllVersionClassListResponseModel(id: '', className: 'Unknown'),
-    ).className;
+    return banglaClassList
+        .firstWhere(
+          (e) => e.id == id,
+          orElse: () =>
+              AllVersionClassListResponseModel(id: '', className: 'Unknown'),
+        )
+        .className;
   }
 
-
-  /// Fetch user details by ID
   Future<void> fetchUserDetails(String userId) async {
     try {
       isLoading.value = true;
       error.value = null;
-
       final result = await _service.getUserDetails(userId);
       userDetailsList.assignAll(result);
     } catch (e) {
@@ -138,8 +140,7 @@ Future<void> fetchUserRoleList() async {
     }
   }
 
-
-    Future<void> updatePassword({
+  Future<void> updatePassword({
     required String userId,
     required String oldPassword,
     required String newPassword,
@@ -149,7 +150,8 @@ Future<void> fetchUserRoleList() async {
     successMessage.value = '';
 
     try {
-      final result = await _service.updatePassword(userId, oldPassword, newPassword);
+      final result =
+          await _service.updatePassword(userId, oldPassword, newPassword);
       successMessage.value = result;
     } catch (e) {
       errorMessage.value = e.toString();
@@ -158,20 +160,19 @@ Future<void> fetchUserRoleList() async {
     }
   }
 
-Future<void> updateUser(UpdateDetailsResponseBody updateBody) async {
-  isLoading.value = true;
-  error.value = null;
+  Future<void> updateUser(UpdateDetailsResponseBody updateBody) async {
+    isLoading.value = true;
+    error.value = null;
 
-  try {
-    final result = await _service.updateUser(updateBody);
-    updatedUser.value = result; // ✅ now matches the type
-  } catch (e) {
-    error.value = e.toString();
-  } finally {
-    isLoading.value = false;
+    try {
+      final result = await _service.updateUser(updateBody);
+      updatedUser.value = result;
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
-
 
   Future<void> fetchProblemDetails(String problemId) async {
     try {
@@ -186,4 +187,71 @@ Future<void> updateUser(UpdateDetailsResponseBody updateBody) async {
     }
   }
 
+  Future<void> sendMessage({
+    required String text,
+    required String userId,
+    required String solutionId,
+    File? voiceFile,
+    File? imageFile,
+  }) async {
+    try {
+      isSending.value = true;
+      errorMessage.value = '';
+      final result = await _service.claimMessage(
+        text,
+        userId,
+        solutionId,
+        voiceFile,
+        imageFile,
+      );
+
+      responseMessage.value = result;
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isSending.value = false;
+    }
+  }
+
+  Future<void> fetchClaimMessages(String solutionId) async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+      final result = await _service.getClaimChat(solutionId);
+      claimMessages.assignAll(result);
+    } catch (e) {
+      errorMessage.value = e.toString();
+      claimMessages.clear();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+    Future<void> sendPendingMessage({
+    required String text,
+    required String userId,
+    required String problemPostId,
+    File? voiceFile,
+  }) async {
+    try {
+      isLoading.value = true;
+      responseMessage.value = '';
+      errorMessage.value = '';
+
+      final message = await _service.postMessage(
+        text: text,
+        userId: userId,
+        problemPostId: problemPostId,
+        voiceFile: voiceFile,
+      );
+
+      responseMessage.value = message;
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+ 
 }

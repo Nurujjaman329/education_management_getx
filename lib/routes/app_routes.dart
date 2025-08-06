@@ -7,4 +7,6 @@ class AppRoutes {
   static const settings = '/settings';
   static const transactionHistory = '/transaction-history';
   static const studentProblemAll = '/student-problems/all';
+  static const solutionAndClaimChat = '/solution-claim-chat';
+
 }

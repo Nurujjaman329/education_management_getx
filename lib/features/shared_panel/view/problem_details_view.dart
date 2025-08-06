@@ -2,15 +2,16 @@ import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/core/widgets/custom_curved_appbar.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/model/problem_details_response_model.dart';
+import 'package:edex_365_getx/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 
-
 class ProblemDetailsView extends StatelessWidget {
   final String problemId;
+  final bool showDiscussion;
 
-  const ProblemDetailsView({super.key, required this.problemId});
+  const ProblemDetailsView({super.key, required this.problemId,this.showDiscussion = true,});
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +35,9 @@ class ProblemDetailsView extends StatelessWidget {
     return Obx(() {
       if (controller.isLoading.value) {
         return const Center(
-          child: CircularProgressIndicator(
-            strokeWidth: 2.5,
-          ));
+            child: CircularProgressIndicator(
+          strokeWidth: 2.5,
+        ));
       }
 
       if (controller.errorMessage.value.isNotEmpty) {
@@ -64,18 +65,24 @@ class ProblemDetailsView extends StatelessWidget {
             children: [
               _buildProblemDetailsSection(problem, isDarkMode),
               const SizedBox(height: 24),
-              _buildActionSection(isDarkMode),
+              _buildActionSection(isDarkMode, controller),
               const SizedBox(height: 24),
-              Text(
-                "Discussion",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.white : Colors.black87,
+              if (showDiscussion) ...[
+                const SizedBox(height: 24),
+                Text(
+                  "Discussion",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black87,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              _buildDiscussionSection(problem, isDarkMode),
+                const SizedBox(height: 16),
+                _buildDiscussionSection(problem, isDarkMode),
+              //    const SizedBox(height: 16),
+              // _buildDiscussionSection(problem, isDarkMode),
+              ],
+             
             ],
           ),
         ),
@@ -83,7 +90,7 @@ class ProblemDetailsView extends StatelessWidget {
     });
   }
 
-  Widget _buildActionSection(bool isDarkMode) {
+  Widget _buildActionSection(bool isDarkMode, SharedController controller) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -122,7 +129,8 @@ class ProblemDetailsView extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDarkMode ? Colors.blue.shade700 : Colors.blue,
+                backgroundColor:
+                    isDarkMode ? Colors.blue.shade700 : Colors.blue,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -131,7 +139,16 @@ class ProblemDetailsView extends StatelessWidget {
                 elevation: 2,
               ),
               onPressed: () {
-                // Navigation to solutions screen
+                final postId = controller.problemDetails.value?.id;
+                if (postId != null) {
+                  Get.toNamed(
+                    AppRoutes.solutionAndClaimChat,
+                    arguments: {'postId': postId},
+                    
+                  );
+                } else {
+                  Get.snackbar("Error", "Problem ID not found");
+                }
               },
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -148,57 +165,59 @@ class ProblemDetailsView extends StatelessWidget {
     );
   }
 
-Widget _buildProblemDetailsSection(
-    ProblemDetailsResponseModel problem, bool isDarkMode) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        problem.subject,
-        style: TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.bold,
-          color: isDarkMode ? Colors.white : Colors.black87,
+  Widget _buildProblemDetailsSection(
+      ProblemDetailsResponseModel problem, bool isDarkMode) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          problem.subject,
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: isDarkMode ? Colors.white : Colors.black87,
+          ),
         ),
-      ),
-      const SizedBox(height: 20),
+        const SizedBox(height: 20),
 
-      // Problem image
-      GestureDetector(
-        onTap: () => Get.to(
-          FullScreenImage(imageUrl: problem.photo, tag: 'problem_${problem.id}'),
-        ),
-        child: Hero(
-          tag: 'problem_${problem.id}',
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              height: 220,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Image.network(
-                problem.photo,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null,
-                    ),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) => Container(
-                  color: Colors.grey.shade300,
-                  child: Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      size: 60,
-                      color: Colors.grey.shade500,
+        // Problem image
+        GestureDetector(
+          onTap: () => Get.to(
+            FullScreenImage(
+                imageUrl: problem.photo, tag: 'problem_${problem.id}'),
+          ),
+          child: Hero(
+            tag: 'problem_${problem.id}',
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                height: 220,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Image.network(
+                  problem.photo,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: Colors.grey.shade300,
+                    child: Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        size: 60,
+                        color: Colors.grey.shade500,
+                      ),
                     ),
                   ),
                 ),
@@ -206,35 +225,33 @@ Widget _buildProblemDetailsSection(
             ),
           ),
         ),
-      ),
 
-      const SizedBox(height: 20),
+        const SizedBox(height: 20),
 
-      // Problem details cards
-      _buildDetailCard(
-        icon: Icons.description,
-        title: 'Description',
-        content: problem.description,
-        isDarkMode: isDarkMode,
-      ),
-      const SizedBox(height: 12),
-      _buildDetailCard(
-        icon: Icons.topic,
-        title: 'Topic',
-        content: problem.topic,
-        isDarkMode: isDarkMode,
-      ),
-      const SizedBox(height: 12),
-      _buildDetailCard(
-        icon: Icons.class_,
-        title: 'Class',
-        content: problem.sClass,
-        isDarkMode: isDarkMode,
-      ),
-    ],
-  );
-}
-
+        // Problem details cards
+        _buildDetailCard(
+          icon: Icons.description,
+          title: 'Description',
+          content: problem.description,
+          isDarkMode: isDarkMode,
+        ),
+        const SizedBox(height: 12),
+        _buildDetailCard(
+          icon: Icons.topic,
+          title: 'Topic',
+          content: problem.topic,
+          isDarkMode: isDarkMode,
+        ),
+        const SizedBox(height: 12),
+        _buildDetailCard(
+          icon: Icons.class_,
+          title: 'Class',
+          content: problem.sClass,
+          isDarkMode: isDarkMode,
+        ),
+      ],
+    );
+  }
 
   Widget _buildDetailCard({
     required IconData icon,
@@ -267,29 +284,32 @@ Widget _buildProblemDetailsSection(
               ),
               child: Icon(icon,
                   size: 20,
-                  color: isDarkMode ? Colors.blue.shade200 : Colors.blue.shade800),
+                  color:
+                      isDarkMode ? Colors.blue.shade200 : Colors.blue.shade800),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: isDarkMode ? Colors.white : Colors.black87,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: isDarkMode ? Colors.white : Colors.black87,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    content,
-                    style: TextStyle(
-                      color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade800,
+                    const SizedBox(height: 6),
+                    Text(
+                      content,
+                      style: TextStyle(
+                        color: isDarkMode
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade800,
+                      ),
                     ),
-                  ),
-                ]),
+                  ]),
             ),
           ],
         ),
@@ -346,8 +366,7 @@ Widget _buildProblemDetailsSection(
               reverse: true,
               itemCount: combinedChats.length,
               itemBuilder: (context, index) {
-                return _buildChatBubble(
-                    combinedChats[index], isDarkMode);
+                return _buildChatBubble(combinedChats[index], isDarkMode);
               },
             ),
           ),
@@ -368,8 +387,9 @@ Widget _buildProblemDetailsSection(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment:
-                chat.isTeacher ? MainAxisAlignment.start : MainAxisAlignment.end,
+            mainAxisAlignment: chat.isTeacher
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.end,
             children: [
               if (chat.isTeacher)
                 CircleAvatar(
@@ -380,57 +400,60 @@ Widget _buildProblemDetailsSection(
               const SizedBox(width: 8),
               Flexible(
                 child: Column(
-                  crossAxisAlignment: chat.isTeacher
-                      ? CrossAxisAlignment.start
-                      : CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: chat.isTeacher
-                            ? (isDarkMode
-                                ? Colors.blue.shade900
-                                : Colors.blue.shade100)
-                            : (isDarkMode
-                                ? Colors.grey.shade700
-                                : Colors.grey.shade300),
-                        borderRadius: BorderRadius.only(
-                          topLeft: const Radius.circular(18),
-                          topRight: const Radius.circular(18),
-                          bottomLeft: Radius.circular(
-                              chat.isTeacher ? 4 : 18),
-                          bottomRight: Radius.circular(
-                              chat.isTeacher ? 18 : 4),
+                    crossAxisAlignment: chat.isTeacher
+                        ? CrossAxisAlignment.start
+                        : CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: chat.isTeacher
+                              ? (isDarkMode
+                                  ? Colors.blue.shade900
+                                  : Colors.blue.shade100)
+                              : (isDarkMode
+                                  ? Colors.grey.shade700
+                                  : Colors.grey.shade300),
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(18),
+                            topRight: const Radius.circular(18),
+                            bottomLeft:
+                                Radius.circular(chat.isTeacher ? 4 : 18),
+                            bottomRight:
+                                Radius.circular(chat.isTeacher ? 18 : 4),
+                          ),
                         ),
-                      ),
-                      child: isAudio
-                          ? _buildAudioPlayer(
-                              chat.message, audioController, isDarkMode)
-                          : Text(
-                              chat.message,
-                              style: TextStyle(
-                                color: chat.isTeacher
-                                    ? (isDarkMode
-                                        ? Colors.white
-                                        : Colors.blue.shade900)
-                                    : (isDarkMode
-                                        ? Colors.white
-                                        : Colors.black87),
+                        child: isAudio
+                            ? _buildAudioPlayer(
+                                chat.message, audioController, isDarkMode)
+                            : Text(
+                                chat.message,
+                                style: TextStyle(
+                                  color: chat.isTeacher
+                                      ? (isDarkMode
+                                          ? Colors.white
+                                          : Colors.blue.shade900)
+                                      : (isDarkMode
+                                          ? Colors.white
+                                          : Colors.black87),
+                                ),
                               ),
-                            ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4, left: 8, right: 8),
-                      child: Text(
-                        _formatTime(chat.date.toString()),
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade600,
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: 4, left: 8, right: 8),
+                        child: Text(
+                          _formatTime(chat.date.toString()),
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: isDarkMode
+                                ? Colors.grey.shade500
+                                : Colors.grey.shade600,
+                          ),
                         ),
                       ),
-                    ),
-                  ]),
+                    ]),
               ),
             ],
           ),
@@ -488,8 +511,8 @@ Widget _buildProblemDetailsSection(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 14),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               ),
             ),
           ),
@@ -642,7 +665,8 @@ class FullScreenImage extends StatelessWidget {
               top: 16,
               left: 16,
               child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                icon:
+                    const Icon(Icons.arrow_back, color: Colors.white, size: 28),
                 onPressed: () => Get.back(),
               ),
             ),
