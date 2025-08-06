@@ -1,4 +1,5 @@
 // lib/features/student_panel/controllers/student_problem_list_controller.dart
+import 'package:edex_365_getx/features/shared_panel/model/problem_details_response_model.dart';
 import 'package:edex_365_getx/features/student_panel/model/student_problem_list_response_model.dart';
 import 'package:edex_365_getx/features/student_panel/service/student_problem_list_service.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,8 @@ class StudentProblemListController extends GetxController {
   var totalProblems = <StudentProblemListResponseModel>[].obs;
   var pendingProblems = <StudentProblemListResponseModel>[].obs;
   var solvedProblems = <StudentProblemListResponseModel>[].obs;
+  var problemDetails = Rxn<ProblemDetailsResponseModel>();
+  
 
   /// Fetches all problem lists in sequence (total, pending, solved)
   Future<void> fetchAll(String userId) async {
@@ -77,4 +80,7 @@ class StudentProblemListController extends GetxController {
       isLoading.value = false;
     }
   }
+
+
+
 }

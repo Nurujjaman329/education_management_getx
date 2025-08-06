@@ -172,16 +172,17 @@ Future<void> updateUser(UpdateDetailsResponseBody updateBody) async {
   }
 }
 
-  Future<void> fetchProblemDetails(String subId) async {
+
+  Future<void> fetchProblemDetails(String problemId) async {
     try {
-      isLoading(true);
-      errorMessage('');
-      final result = await _service.getProblemDetails(subId);
-      problemDetails(result);
+      isLoading.value = true;
+      errorMessage.value = '';
+      final result = await _service.getProblemDetails(problemId);
+      problemDetails.value = result;
     } catch (e) {
-      errorMessage(e.toString());
+      errorMessage.value = e.toString();
     } finally {
-      isLoading(false);
+      isLoading.value = false;
     }
   }
 

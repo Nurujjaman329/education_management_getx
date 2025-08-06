@@ -1,25 +1,21 @@
 import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/features/student_panel/model/student_problem_list_response_model.dart';
-import 'package:edex_365_getx/features/student_panel/view/widget/student_all_problem_details_view.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class ProblemCard extends StatelessWidget {
   final StudentProblemListResponseModel problem;
+  final void Function()? onTap; // 👈 Optional navigation callback
 
-  const ProblemCard({super.key, required this.problem});
+  const ProblemCard({
+    super.key,
+    required this.problem,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Get.to(
-          () => StudentAllProblemDetailsView(problem: problem),
-          transition: Transition.leftToRight, // 👈 Animation type
-          duration:
-              const Duration(milliseconds: 400), // 👈 Optional custom duration
-        );
-      },
+      onTap: onTap, // 👈 Use the callback directly
       borderRadius: BorderRadius.circular(12),
       child: Container(
         decoration: BoxDecoration(
@@ -90,3 +86,5 @@ class ProblemCard extends StatelessWidget {
     );
   }
 }
+
+

@@ -2,6 +2,7 @@ import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/core/widgets/custom_curved_appbar.dart';
 import 'package:edex_365_getx/features/student_panel/controller/student_problem_list_controller.dart';
 import 'package:edex_365_getx/features/student_panel/view/widget/problem_card.dart';
+import 'package:edex_365_getx/features/student_panel/view/widget/student_all_problem_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -57,15 +58,24 @@ class StudentProblemListView extends StatelessWidget {
             );
           }
 
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: controller.totalProblems.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final problem = controller.totalProblems[index];
-              return ProblemCard(problem: problem);
-            },
-          );
+  return ListView.separated(
+  padding: const EdgeInsets.all(16),
+  itemCount: controller.solvedProblems.length,
+  separatorBuilder: (_, __) => const SizedBox(height: 12),
+  itemBuilder: (context, index) {
+    final problem = controller.solvedProblems[index];
+    return ProblemCard(
+      problem: problem,
+      onTap: () {
+        Get.to(
+          () => StudentAllProblemDetailsView(problem: problem),
+          transition: Transition.leftToRight,
+          duration: const Duration(milliseconds: 400),
+        );
+      },
+    );
+  },
+);
         }),
 
     );
