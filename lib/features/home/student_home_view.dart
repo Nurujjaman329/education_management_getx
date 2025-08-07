@@ -1,4 +1,5 @@
 import 'package:edex_365_getx/core/config/app_colors.dart';
+import 'package:edex_365_getx/core/utils/back_press_utils.dart';
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
 import 'package:edex_365_getx/features/student_panel/model/student_problem_list_response_model.dart';
@@ -47,61 +48,64 @@ class _StudentHomeViewState extends State<StudentHomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        final userId = authController.loginResponse.value?.id ??
-            authController.userId.value;
-        if (userId.isNotEmpty) {
-          await controller.fetchAll(userId);
-        }
-      },
-      child: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: AppColors.primary,
-            ),
-          );
-        }
-
-        if (controller.errorMessage.isNotEmpty) {
-          return Center(
-            child: Text(
-              controller.errorMessage.value,
-              style: const TextStyle(
-                color: AppColors.error,
-                fontSize: 16,
+    return WillPopScope(
+       onWillPop: () => BackPressHandler.handleWillPop(context),
+      child: RefreshIndicator(
+        onRefresh: () async {
+          final userId = authController.loginResponse.value?.id ??
+              authController.userId.value;
+          if (userId.isNotEmpty) {
+            await controller.fetchAll(userId);
+          }
+        },
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
               ),
+            );
+          }
+      
+          if (controller.errorMessage.isNotEmpty) {
+            return Center(
+              child: Text(
+                controller.errorMessage.value,
+                style: const TextStyle(
+                  color: AppColors.error,
+                  fontSize: 16,
+                ),
+              ),
+            );
+          }
+      
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                // Enhanced Welcome Header with user name
+                _buildWelcomeHeader(),
+                const SizedBox(height: 20),
+      
+                // Quick Stats with improved layout
+                _buildQuickStats(),
+                const SizedBox(height: 24),
+      
+                // Learning Progress Section
+                _buildLearningProgress(),
+                const SizedBox(height: 24),
+      
+                // Charts Section with better visualization
+                _buildChartsSection(),
+                const SizedBox(height: 24),
+      
+                // Recent Problems with improved cards
+                _buildRecentProblems(),
+              ],
             ),
           );
-        }
-
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              // Enhanced Welcome Header with user name
-              _buildWelcomeHeader(),
-              const SizedBox(height: 20),
-
-              // Quick Stats with improved layout
-              _buildQuickStats(),
-              const SizedBox(height: 24),
-
-              // Learning Progress Section
-              _buildLearningProgress(),
-              const SizedBox(height: 24),
-
-              // Charts Section with better visualization
-              _buildChartsSection(),
-              const SizedBox(height: 24),
-
-              // Recent Problems with improved cards
-              _buildRecentProblems(),
-            ],
-          ),
-        );
-      }),
+        }),
+      ),
     );
   }
 

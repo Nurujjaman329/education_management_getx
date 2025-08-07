@@ -4,7 +4,7 @@ import 'package:edex_365_getx/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/config/app_colors.dart';
+import '../../../core/config/app_colors.dart';
 
 
 class RegistrationView extends StatefulWidget {

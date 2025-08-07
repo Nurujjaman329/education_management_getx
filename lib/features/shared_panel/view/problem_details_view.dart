@@ -1,26 +1,39 @@
+import 'dart:io';
+
 import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/core/widgets/custom_curved_appbar.dart';
+import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/model/problem_details_response_model.dart';
 import 'package:edex_365_getx/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:record/record.dart';
 
-class ProblemDetailsView extends StatelessWidget {
+class ProblemDetailsView extends StatefulWidget {
   final String problemId;
   final bool showDiscussion;
 
   const ProblemDetailsView({super.key, required this.problemId,this.showDiscussion = true,});
 
   @override
+  State<ProblemDetailsView> createState() => _ProblemDetailsViewState();
+}
+
+class _ProblemDetailsViewState extends State<ProblemDetailsView> {
+
+
+  
+  @override
   Widget build(BuildContext context) {
+  //  final authController = Get.find<AuthController>();
     final controller = Get.find<SharedController>();
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
     return FutureBuilder(
-      future: controller.fetchProblemDetails(problemId),
+      future: controller.fetchProblemDetails(widget.problemId),
       builder: (context, snapshot) {
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -57,7 +70,7 @@ class ProblemDetailsView extends StatelessWidget {
 
       return RefreshIndicator(
         color: Colors.blue,
-        onRefresh: () => controller.fetchProblemDetails(problemId),
+        onRefresh: () => controller.fetchProblemDetails(widget.problemId),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -67,7 +80,7 @@ class ProblemDetailsView extends StatelessWidget {
               const SizedBox(height: 24),
               _buildActionSection(isDarkMode, controller),
               const SizedBox(height: 24),
-              if (showDiscussion) ...[
+              if (widget.showDiscussion) ...[
                 const SizedBox(height: 24),
                 Text(
                   "Discussion",
@@ -496,39 +509,175 @@ class ProblemDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageInputField(bool isDarkMode) {
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: "Type your message...",
-                filled: true,
-                fillColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
+Widget _buildMessageInputField(bool isDarkMode) {
+  final sharedController = Get.find<SharedController>();
+  final authController = Get.find<AuthController>();
+  final textController = TextEditingController();
+  final isRecording = false.obs;
+  final audioPath = ''.obs;
+
+  final recorder = AudioRecorder(); // ✅ Correct class
+
+  Future<void> startRecording() async {
+    try {
+      final hasPermission = await recorder.hasPermission(); // ✅ Fixed
+      if (hasPermission) {
+        final path = '${Directory.systemTemp.path}/recording_${DateTime.now().millisecondsSinceEpoch}.m4a';
+        await recorder.start(
+          const RecordConfig(
+            encoder: AudioEncoder.aacLc,
+            bitRate: 128000,
+            sampleRate: 44100,
+          ),
+          path: path,
+        );
+        isRecording.value = true;
+      } else {
+        Get.snackbar('Permission required', 'Please allow microphone access');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to start recording: ${e.toString()}');
+    }
+  }
+
+  Future<void> stopRecording() async {
+    try {
+      final path = await recorder.stop(); // ✅ Fixed
+      isRecording.value = false;
+      if (path != null) {
+        audioPath.value = path;
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to stop recording: ${e.toString()}');
+    }
+  }
+
+  Future<void> sendMessage() async {
+    final problem = sharedController.problemDetails.value;
+    if (problem == null) return;
+
+    final userId = authController.userId.value;
+    final problemPostId = problem.id;
+
+    if (textController.text.isNotEmpty || audioPath.value.isNotEmpty) {
+      try {
+        await sharedController.sendPendingMessage(
+          text: textController.text,
+          userId: userId,
+          problemPostId: problemPostId,
+          voiceFile: audioPath.value.isNotEmpty ? File(audioPath.value) : null,
+        );
+
+        textController.clear();
+        audioPath.value = '';
+        await sharedController.fetchProblemDetails(problemPostId);
+      } catch (e) {
+        Get.snackbar('Error', 'Failed to send message: ${e.toString()}');
+      }
+    }
+  }
+
+  return Padding(
+    padding: const EdgeInsets.all(12),
+    child: Column(
+      children: [
+        Obx(() {
+          if (isRecording.value) {
+            return Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                children: [
+                  const Icon(Icons.mic, color: Colors.red),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Recording...',
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.stop),
+                    onPressed: stopRecording,
+                  ),
+                ],
+              ),
+            );
+          } else if (audioPath.value.isNotEmpty) {
+            return Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                children: [
+                  const Icon(Icons.audiotrack),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Voice message ready',
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => audioPath.value = '',
+                  ),
+                ],
+              ),
+            );
+          }
+          return const SizedBox();
+        }),
+        Row(
+          children: [
+            IconButton(
+              icon: Obx(() => Icon(
+                    isRecording.value ? Icons.mic : Icons.mic_none,
+                    color: isRecording.value ? Colors.red : Colors.blue,
+                  )),
+              onPressed: () {
+                if (isRecording.value) {
+                  stopRecording();
+                } else {
+                  startRecording();
+                }
+              },
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: TextField(
+                controller: textController,
+                decoration: InputDecoration(
+                  hintText: "Type your message...",
+                  filled: true,
+                  fillColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                onSubmitted: (_) => sendMessage(),
               ),
             ),
-          ),
-          const SizedBox(width: 8),
-          CircleAvatar(
-            radius: 24,
-            backgroundColor: Colors.blue,
-            child: IconButton(
-              icon: const Icon(Icons.send, color: Colors.white),
-              onPressed: () {},
+            const SizedBox(width: 8),
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: Colors.blue,
+              child: IconButton(
+                icon: const Icon(Icons.send, color: Colors.white),
+                onPressed: sendMessage,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
 
   String _formatTime(String dateStr) {
     final date = DateTime.parse(dateStr);
