@@ -11,12 +11,13 @@ class GlobalNetworkStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final connectivityController = Get.find<ConnectivityController>();
+    final theme = Theme.of(context);
 
     return Obx(() {
       if (!connectivityController.isConnected.value) {
         // Show full-screen no connection UI
-        return const Scaffold(
-          backgroundColor: Colors.white,
+        return Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
           body: SafeArea(
             child: Center(
               child: Column(

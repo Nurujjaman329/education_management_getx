@@ -1,4 +1,3 @@
-import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -41,9 +40,10 @@ if (token != null && token.isNotEmpty) {
 
  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: AppColors.primary,
-      body: Center(
+    final theme = Theme.of(context);
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      body: const Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

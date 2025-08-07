@@ -1,4 +1,3 @@
-import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/core/widgets/custom_curved_appbar.dart';
 import 'package:edex_365_getx/features/shared_panel/model/user_details_response_model.dart';
 import 'package:flutter/material.dart';
@@ -12,17 +11,19 @@ class UserInfoDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Get.find<SharedController>().userDetailsList.firstOrNull;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
 
     return Scaffold(
       appBar: const CustomCurvedAppBar(title: "User Profile"),
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: user == null
-          ? const Center(
+          ? Center(
               child: Text(
                 "No user data found",
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 16,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface.withOpacity(0.6),
                 ),
               ),
             )
@@ -31,13 +32,13 @@ class UserInfoDetailsView extends StatelessWidget {
               child: Column(
                 children: [
                   // Profile Header with Image
-                  _buildProfileHeader(user),
+                  _buildProfileHeader(user, theme),
                   const SizedBox(height: 24),
                   
                   // User Information Card
                   Container(
                     decoration: BoxDecoration(
-                      color: AppColors.surface,
+                      color: colorScheme.surface,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
@@ -50,21 +51,38 @@ class UserInfoDetailsView extends StatelessWidget {
                     padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        _buildInfoRow(label: 'Name', value: user.name),
+                        _buildInfoRow(
+                          label: 'Name', 
+                          value: user.name,
+                          theme: theme,
+                        ),
                         const Divider(height: 24),
-                        _buildInfoRow(label: 'Email', value: user.email),
+                        _buildInfoRow(
+                          label: 'Email', 
+                          value: user.email,
+                          theme: theme,
+                        ),
                         const Divider(height: 24),
-                        _buildInfoRow(label: 'Mobile', value: user.mobileNo),
+                        _buildInfoRow(
+                          label: 'Mobile', 
+                          value: user.mobileNo,
+                          theme: theme,
+                        ),
                         if (user.dob != null) ...[
                           const Divider(height: 24),
                           _buildInfoRow(
                             label: 'Date of Birth', 
-                            value: DateFormat('dd MMM yyyy').format(user.dob!)
+                            value: DateFormat('dd MMM yyyy').format(user.dob!),
+                            theme: theme,
                           ),
                         ],
                         if (user.school.isNotEmpty) ...[
                           const Divider(height: 24),
-                          _buildInfoRow(label: 'School', value: user.school),
+                          _buildInfoRow(
+                            label: 'School', 
+                            value: user.school,
+                            theme: theme,
+                          ),
                         ],
                       ],
                     ),
@@ -75,19 +93,22 @@ class UserInfoDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileHeader(UserDetailsResponseModel user) {
+  Widget _buildProfileHeader(UserDetailsResponseModel user, ThemeData theme) {
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Column(
       children: [
         // Profile Image with Hero animation
         Hero(
-          tag: 'user-profile-image-',
+          tag: 'user-profile-image',
           child: Container(
             width: 120,
             height: 120,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: AppColors.primary.withOpacity(0.2),
+                color: colorScheme.primary.withOpacity(0.2),
                 width: 3,
               ),
             ),
@@ -104,31 +125,29 @@ class UserInfoDetailsView extends StatelessWidget {
                                 ? loadingProgress.cumulativeBytesLoaded /
                                     loadingProgress.expectedTotalBytes!
                                 : null,
+                            color: colorScheme.primary,
                           ),
                         );
                       },
-                      errorBuilder: (_, __, ___) => _buildDefaultAvatar(),
+                      errorBuilder: (_, __, ___) => _buildDefaultAvatar(theme),
                     )
-                  : _buildDefaultAvatar(),
+                  : _buildDefaultAvatar(theme),
             ),
           ),
         ),
         const SizedBox(height: 16),
         Text(
           user.name,
-          style: const TextStyle(
-            fontSize: 22,
+          style: textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
           ),
         ),
         if (user.email.isNotEmpty) ...[
           const SizedBox(height: 4),
           Text(
             user.email,
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.6),
             ),
           ),
         ],
@@ -136,20 +155,27 @@ class UserInfoDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildDefaultAvatar() {
+  Widget _buildDefaultAvatar(ThemeData theme) {
     return Container(
-      color: AppColors.primary.withOpacity(0.1),
-      child: const Center(
+      color: theme.colorScheme.primary.withOpacity(0.1),
+      child: Center(
         child: Icon(
           Icons.person,
           size: 48,
-          color: AppColors.primary,
+          color: theme.colorScheme.primary,
         ),
       ),
     );
   }
 
-  Widget _buildInfoRow({required String label, required String value}) {
+  Widget _buildInfoRow({
+    required String label, 
+    required String value,
+    required ThemeData theme,
+  }) {
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -157,9 +183,8 @@ class UserInfoDetailsView extends StatelessWidget {
           width: 100,
           child: Text(
             label,
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.6),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -168,10 +193,7 @@ class UserInfoDetailsView extends StatelessWidget {
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
-              fontSize: 15,
-              color: AppColors.textPrimary,
-            ),
+            style: textTheme.bodyLarge,
           ),
         ),
       ],

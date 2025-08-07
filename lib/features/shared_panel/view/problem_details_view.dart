@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/core/widgets/custom_curved_appbar.dart';
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
@@ -15,87 +13,86 @@ class ProblemDetailsView extends StatefulWidget {
   final String problemId;
   final bool showDiscussion;
 
-  const ProblemDetailsView({super.key, required this.problemId,this.showDiscussion = true,});
+  const ProblemDetailsView({
+    super.key, 
+    required this.problemId,
+    this.showDiscussion = true,
+  });
 
   @override
   State<ProblemDetailsView> createState() => _ProblemDetailsViewState();
 }
 
 class _ProblemDetailsViewState extends State<ProblemDetailsView> {
-
-
-  
   @override
   Widget build(BuildContext context) {
-  //  final authController = Get.find<AuthController>();
-    final controller = Get.find<SharedController>();
     final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
+    final controller = Get.find<SharedController>();
 
     return FutureBuilder(
       future: controller.fetchProblemDetails(widget.problemId),
       builder: (context, snapshot) {
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: theme.scaffoldBackgroundColor,
           appBar: const CustomCurvedAppBar(title: "Problem Details"),
-          body: _buildBody(controller, isDarkMode),
+          body: _buildBody(controller, theme),
         );
       },
     );
   }
 
-  Widget _buildBody(SharedController controller, bool isDarkMode) {
+  Widget _buildBody(SharedController controller, ThemeData theme) {
     return Obx(() {
       if (controller.isLoading.value) {
-        return const Center(
-            child: CircularProgressIndicator(
-          strokeWidth: 2.5,
-        ));
+        return Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2.5,
+            color: theme.colorScheme.primary,
+          ),
+        );
       }
 
       if (controller.errorMessage.value.isNotEmpty) {
         return Center(
-            child: Text(controller.errorMessage.value,
-                style: TextStyle(
-                    color: isDarkMode ? Colors.red.shade300 : Colors.red)));
+          child: Text(
+            controller.errorMessage.value,
+            style: TextStyle(color: theme.colorScheme.error),
+          ),
+        );
       }
 
       final problem = controller.problemDetails.value;
       if (problem == null) {
         return Center(
-            child: Text('No problem details found',
-                style: TextStyle(
-                    color: isDarkMode ? Colors.grey.shade400 : Colors.grey)));
+          child: Text(
+            'No problem details found',
+            style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+          ),
+        );
       }
 
       return RefreshIndicator(
-        color: Colors.blue,
+        color: theme.colorScheme.primary,
         onRefresh: () => controller.fetchProblemDetails(widget.problemId),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildProblemDetailsSection(problem, isDarkMode),
+              _buildProblemDetailsSection(problem, theme),
               const SizedBox(height: 24),
-              _buildActionSection(isDarkMode, controller),
-              const SizedBox(height: 24),
+              _buildActionSection(theme, controller),
               if (widget.showDiscussion) ...[
                 const SizedBox(height: 24),
                 Text(
                   "Discussion",
-                  style: TextStyle(
-                    fontSize: 22,
+                  style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 16),
-                _buildDiscussionSection(problem, isDarkMode),
-              //    const SizedBox(height: 16),
-              // _buildDiscussionSection(problem, isDarkMode),
+                _buildDiscussionSection(problem, theme),
               ],
-             
             ],
           ),
         ),
@@ -103,19 +100,19 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
     });
   }
 
-  Widget _buildActionSection(bool isDarkMode, SharedController controller) {
+  Widget _buildActionSection(ThemeData theme, SharedController controller) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800 : Colors.blue.shade50,
+        color: theme.colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Column(
@@ -123,18 +120,15 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
         children: [
           Text(
             "Explore available solutions",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: isDarkMode ? Colors.white : Colors.blue.shade900,
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             "Get help from verified experts and community members",
-            style: TextStyle(
-              fontSize: 14,
-              color: isDarkMode ? Colors.grey.shade400 : Colors.blue.shade700,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant.withOpacity(0.8),
             ),
           ),
           const SizedBox(height: 16),
@@ -142,14 +136,12 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    isDarkMode ? Colors.blue.shade700 : Colors.blue,
-                foregroundColor: Colors.white,
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                elevation: 2,
               ),
               onPressed: () {
                 final postId = controller.problemDetails.value?.id;
@@ -157,7 +149,6 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
                   Get.toNamed(
                     AppRoutes.solutionAndClaimChat,
                     arguments: {'postId': postId},
-                    
                   );
                 } else {
                   Get.snackbar("Error", "Problem ID not found");
@@ -179,16 +170,14 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
   }
 
   Widget _buildProblemDetailsSection(
-      ProblemDetailsResponseModel problem, bool isDarkMode) {
+      ProblemDetailsResponseModel problem, ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           problem.subject,
-          style: TextStyle(
-            fontSize: 28,
+          style: theme.textTheme.displaySmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: isDarkMode ? Colors.white : Colors.black87,
           ),
         ),
         const SizedBox(height: 20),
@@ -197,7 +186,9 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
         GestureDetector(
           onTap: () => Get.to(
             FullScreenImage(
-                imageUrl: problem.photo, tag: 'problem_${problem.id}'),
+              imageUrl: problem.photo, 
+              tag: 'problem_${problem.id}'
+            ),
           ),
           child: Hero(
             tag: 'problem_${problem.id}',
@@ -205,9 +196,6 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
               borderRadius: BorderRadius.circular(16),
               child: Container(
                 height: 220,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                ),
                 child: Image.network(
                   problem.photo,
                   width: double.infinity,
@@ -220,16 +208,17 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
                             ? loadingProgress.cumulativeBytesLoaded /
                                 loadingProgress.expectedTotalBytes!
                             : null,
+                        color: theme.colorScheme.primary,
                       ),
                     );
                   },
                   errorBuilder: (context, error, stackTrace) => Container(
-                    color: Colors.grey.shade300,
+                    color: theme.colorScheme.surfaceVariant,
                     child: Center(
                       child: Icon(
                         Icons.broken_image,
                         size: 60,
-                        color: Colors.grey.shade500,
+                        color: theme.colorScheme.onSurfaceVariant.withOpacity(0.3),
                       ),
                     ),
                   ),
@@ -246,21 +235,21 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
           icon: Icons.description,
           title: 'Description',
           content: problem.description,
-          isDarkMode: isDarkMode,
+          theme: theme,
         ),
         const SizedBox(height: 12),
         _buildDetailCard(
           icon: Icons.topic,
           title: 'Topic',
           content: problem.topic,
-          isDarkMode: isDarkMode,
+          theme: theme,
         ),
         const SizedBox(height: 12),
         _buildDetailCard(
           icon: Icons.class_,
           title: 'Class',
           content: problem.sClass,
-          isDarkMode: isDarkMode,
+          theme: theme,
         ),
       ],
     );
@@ -270,11 +259,11 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
     required IconData icon,
     required String title,
     required String content,
-    required bool isDarkMode,
+    required ThemeData theme,
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800 : Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -292,37 +281,35 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: isDarkMode ? Colors.blue.shade900 : Colors.blue.shade100,
+                color: theme.colorScheme.primaryContainer,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon,
-                  size: 20,
-                  color:
-                      isDarkMode ? Colors.blue.shade200 : Colors.blue.shade800),
+              child: Icon(
+                icon,
+                size: 20,
+                color: theme.colorScheme.onPrimaryContainer,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: isDarkMode ? Colors.white : Colors.black87,
-                      ),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      content,
-                      style: TextStyle(
-                        color: isDarkMode
-                            ? Colors.grey.shade400
-                            : Colors.grey.shade800,
-                      ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    content,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.8),
                     ),
-                  ]),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -331,7 +318,7 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
   }
 
   Widget _buildDiscussionSection(
-      ProblemDetailsResponseModel problem, bool isDarkMode) {
+      ProblemDetailsResponseModel problem, ThemeData theme) {
     final combinedChats = [
       ...problem.teacherChats.map((e) => _ChatMessage(
             message: e.message,
@@ -347,7 +334,7 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
+        color: theme.colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
       ),
       constraints: const BoxConstraints(minHeight: 300),
@@ -357,15 +344,15 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Icon(Icons.chat_bubble_outline,
-                    color: isDarkMode ? Colors.blue.shade300 : Colors.blue),
+                Icon(
+                  Icons.chat_bubble_outline,
+                  color: theme.colorScheme.primary,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   "Discussion History",
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDarkMode ? Colors.white : Colors.black87,
                   ),
                 ),
               ],
@@ -379,17 +366,17 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
               reverse: true,
               itemCount: combinedChats.length,
               itemBuilder: (context, index) {
-                return _buildChatBubble(combinedChats[index], isDarkMode);
+                return _buildChatBubble(combinedChats[index], theme);
               },
             ),
           ),
-          _buildMessageInputField(isDarkMode),
+          _buildMessageInputField(theme),
         ],
       ),
     );
   }
 
-  Widget _buildChatBubble(_ChatMessage chat, bool isDarkMode) {
+  Widget _buildChatBubble(_ChatMessage chat, ThemeData theme) {
     final isAudio = chat.message.toLowerCase().endsWith('.m4a') &&
         chat.message.startsWith('http');
 
@@ -407,66 +394,56 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
               if (chat.isTeacher)
                 CircleAvatar(
                   radius: 14,
-                  backgroundColor: Colors.blue.shade200,
-                  child: const Icon(Icons.person, size: 16),
+                  backgroundColor: theme.colorScheme.primaryContainer,
+                  child: Icon(
+                    Icons.person,
+                    size: 16,
+                    color: theme.colorScheme.onPrimaryContainer,
+                  ),
                 ),
               const SizedBox(width: 8),
               Flexible(
                 child: Column(
-                    crossAxisAlignment: chat.isTeacher
-                        ? CrossAxisAlignment.start
-                        : CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: chat.isTeacher
-                              ? (isDarkMode
-                                  ? Colors.blue.shade900
-                                  : Colors.blue.shade100)
-                              : (isDarkMode
-                                  ? Colors.grey.shade700
-                                  : Colors.grey.shade300),
-                          borderRadius: BorderRadius.only(
-                            topLeft: const Radius.circular(18),
-                            topRight: const Radius.circular(18),
-                            bottomLeft:
-                                Radius.circular(chat.isTeacher ? 4 : 18),
-                            bottomRight:
-                                Radius.circular(chat.isTeacher ? 18 : 4),
-                          ),
+                  crossAxisAlignment: chat.isTeacher
+                      ? CrossAxisAlignment.start
+                      : CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: chat.isTeacher
+                            ? theme.colorScheme.primaryContainer
+                            : theme.colorScheme.surface,
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(18),
+                          topRight: const Radius.circular(18),
+                          bottomLeft: Radius.circular(chat.isTeacher ? 4 : 18),
+                          bottomRight: Radius.circular(chat.isTeacher ? 18 : 4),
                         ),
-                        child: isAudio
-                            ? _buildAudioPlayer(
-                                chat.message, audioController, isDarkMode)
-                            : Text(
-                                chat.message,
-                                style: TextStyle(
-                                  color: chat.isTeacher
-                                      ? (isDarkMode
-                                          ? Colors.white
-                                          : Colors.blue.shade900)
-                                      : (isDarkMode
-                                          ? Colors.white
-                                          : Colors.black87),
-                                ),
+                      ),
+                      child: isAudio
+                          ? _buildAudioPlayer(chat.message, audioController, theme)
+                          : Text(
+                              chat.message,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: chat.isTeacher
+                                    ? theme.colorScheme.onPrimaryContainer
+                                    : theme.colorScheme.onSurface,
                               ),
-                      ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: 4, left: 8, right: 8),
-                        child: Text(
-                          _formatTime(chat.date.toString()),
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: isDarkMode
-                                ? Colors.grey.shade500
-                                : Colors.grey.shade600,
-                          ),
+                            ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4, left: 8, right: 8),
+                      child: Text(
+                        _formatTime(chat.date.toString()),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
                         ),
                       ),
-                    ]),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -476,7 +453,7 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
   }
 
   Widget _buildAudioPlayer(
-      String audioUrl, AudioController controller, bool isDarkMode) {
+      String audioUrl, AudioController controller, ThemeData theme) {
     final isPlaying = controller.isPlaying.value &&
         controller.currentAudioUrl.value == audioUrl;
 
@@ -486,7 +463,7 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
         IconButton(
           icon: Icon(
             isPlaying ? Icons.pause : Icons.play_arrow,
-            color: isDarkMode ? Colors.white : Colors.blue.shade800,
+            color: theme.colorScheme.primary,
           ),
           onPressed: () {
             if (isPlaying) {
@@ -501,15 +478,16 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
             controller.totalDuration.value > 0
                 ? 'Voice message (${_formatDuration(controller.totalDuration.value)})'
                 : 'Loading...',
-            style: TextStyle(
-                color: isDarkMode ? Colors.white : Colors.blue.shade800),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.primary,
+            ),
           );
         }),
       ],
     );
   }
 
-Widget _buildMessageInputField(bool isDarkMode) {
+Widget _buildMessageInputField(ThemeData theme) {
   final sharedController = Get.find<SharedController>();
   final authController = Get.find<AuthController>();
   final textController = TextEditingController();
@@ -577,6 +555,8 @@ Widget _buildMessageInputField(bool isDarkMode) {
     }
   }
 
+  final isDarkMode = theme.brightness == Brightness.dark;
+
   return Padding(
     padding: const EdgeInsets.all(12),
     child: Column(
@@ -632,7 +612,7 @@ Widget _buildMessageInputField(bool isDarkMode) {
             IconButton(
               icon: Obx(() => Icon(
                     isRecording.value ? Icons.mic : Icons.mic_none,
-                    color: isRecording.value ? Colors.red : Colors.blue,
+                    color: isRecording.value ? Colors.red : theme.colorScheme.primary,
                   )),
               onPressed: () {
                 if (isRecording.value) {
@@ -665,7 +645,7 @@ Widget _buildMessageInputField(bool isDarkMode) {
             const SizedBox(width: 8),
             CircleAvatar(
               radius: 24,
-              backgroundColor: Colors.blue,
+              backgroundColor: theme.colorScheme.primary,
               child: IconButton(
                 icon: const Icon(Icons.send, color: Colors.white),
                 onPressed: sendMessage,
@@ -791,8 +771,9 @@ class FullScreenImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Stack(
           children: [

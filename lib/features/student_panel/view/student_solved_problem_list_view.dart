@@ -14,9 +14,9 @@ class StudentSolvedProblemListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<StudentProblemListController>();
-
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: const CustomCurvedAppBar(
         title: "Solved List",
         showBackButton: true,

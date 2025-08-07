@@ -28,3 +28,7 @@ class AppColors {
   static const darkDisabled = Color(0xFF666666);
   static const darkDivider = Color(0xFF333333);
 }
+
+
+
+

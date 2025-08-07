@@ -94,8 +94,9 @@ class _SolutionAndClaimChatViewState extends State<SolutionAndClaimChatView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: const CustomCurvedAppBar(title: "Solutions & Chats"),
       body: Column(
         children: [

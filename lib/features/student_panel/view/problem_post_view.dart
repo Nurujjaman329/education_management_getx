@@ -60,16 +60,16 @@ class ProblemPostView extends StatelessWidget {
             'Success',
             'Problem posted successfully!',
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: AppColors.success,
-            colorText: Colors.white,
+            backgroundColor: Theme.of(Get.context!).colorScheme.secondary,
+            colorText: Theme.of(Get.context!).colorScheme.onSecondary,
           );
         } else {
           Get.snackbar(
             'Error',
             postController.errorMessage.value,
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: AppColors.error,
-            colorText: Colors.white,
+            backgroundColor: Theme.of(Get.context!).colorScheme.error,
+            colorText: Theme.of(Get.context!).colorScheme.onError,
           );
         }
       });
@@ -78,8 +78,9 @@ class ProblemPostView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Post Problem'),
         centerTitle: true,
@@ -100,10 +101,9 @@ class ProblemPostView extends StatelessWidget {
                     children: [
                       Text(
                         'Add Image (Optional)',
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                ),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
                       ),
                       const SizedBox(height: 8),
                       GestureDetector(
@@ -111,7 +111,7 @@ class ProblemPostView extends StatelessWidget {
                         child: Container(
                           height: 150,
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
+                            color: theme.cardColor,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: selectedImage.value == null
@@ -121,13 +121,13 @@ class ProblemPostView extends StatelessWidget {
                                     Icon(
                                       Icons.camera_alt,
                                       size: 32,
-                                      color: Colors.grey.shade400,
+                                      color: theme.disabledColor,
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
                                       'Tap to add photo',
-                                      style: TextStyle(
-                                        color: Colors.grey.shade600,
+                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                        color: theme.disabledColor,
                                       ),
                                     ),
                                   ],
@@ -144,7 +144,12 @@ class ProblemPostView extends StatelessWidget {
                       if (selectedImage.value != null)
                         TextButton(
                           onPressed: () => selectedImage.value = null,
-                          child: const Text('Remove'),
+                          child: Text(
+                            'Remove',
+                            style: TextStyle(
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
                         ),
                     ],
                   )),
@@ -154,7 +159,7 @@ class ProblemPostView extends StatelessWidget {
               // Problem Topic
               Text(
                 'Problem Title',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
               ),
@@ -167,7 +172,7 @@ class ProblemPostView extends StatelessWidget {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey.shade100,
+                  fillColor: theme.cardColor,
                 ),
                 onChanged: (value) => problemTopic.value = value,
                 validator: (value) => value == null || value.isEmpty
@@ -179,7 +184,7 @@ class ProblemPostView extends StatelessWidget {
               // Problem Description
               Text(
                 'Description',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
               ),
@@ -193,7 +198,7 @@ class ProblemPostView extends StatelessWidget {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey.shade100,
+                  fillColor: theme.cardColor,
                 ),
                 onChanged: (value) => problemDescription.value = value,
                 validator: (value) => value == null || value.isEmpty
@@ -205,7 +210,7 @@ class ProblemPostView extends StatelessWidget {
               // Category Section
               Text(
                 'Categories',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
               ),
@@ -213,6 +218,7 @@ class ProblemPostView extends StatelessWidget {
 
               // Subject Dropdown
               Obx(() => _CustomDropdown(
+                    theme: theme,
                     value: selectedSubject.value.isEmpty
                         ? null
                         : selectedSubject.value,
@@ -232,6 +238,7 @@ class ProblemPostView extends StatelessWidget {
 
               // Academic Version Dropdown
               Obx(() => _CustomDropdown(
+                    theme: theme,
                     value: selectedAcademy.value.isEmpty
                         ? null
                         : selectedAcademy.value,
@@ -256,7 +263,11 @@ class ProblemPostView extends StatelessWidget {
               // Class Dropdown (conditional)
               Obx(() {
                 if (sharedController.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: theme.colorScheme.primary,
+                    ),
+                  );
                 }
 
                 final selectedVersion = sharedController.versionList
@@ -269,6 +280,7 @@ class ProblemPostView extends StatelessWidget {
                 if (versionName == 'english medium' ||
                     selectedAcademy.value == '1') {
                   return _CustomDropdown(
+                    theme: theme,
                     value: selectedEnglish.value.isEmpty
                         ? null
                         : selectedEnglish.value,
@@ -287,6 +299,7 @@ class ProblemPostView extends StatelessWidget {
                 } else if (versionName == 'general(english version/bangla)' ||
                     selectedAcademy.value == '2') {
                   return _CustomDropdown(
+                    theme: theme,
                     value: selectedBangla.value.isEmpty
                         ? null
                         : selectedBangla.value,
@@ -311,25 +324,22 @@ class ProblemPostView extends StatelessWidget {
               Obx(() => SizedBox(
                     height: 50,
                     child: ElevatedButton(
-                      
                       onPressed:
                           postController.isLoading.value ? null : _submit,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: theme.colorScheme.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: postController.isLoading.value
-                          ? const CircularProgressIndicator(
-                              color: Colors.white,
+                          ? CircularProgressIndicator(
+                              color: theme.colorScheme.onPrimary,
                             )
-                          : const Text(
+                          : Text(
                               'Post',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.background,
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                color: theme.colorScheme.onPrimary,
                               ),
                             ),
                     ),
@@ -345,6 +355,7 @@ class ProblemPostView extends StatelessWidget {
 }
 
 class _CustomDropdown extends StatelessWidget {
+  final ThemeData theme;
   final String? value;
   final String hint;
   final List<DropdownMenuItem<String>> items;
@@ -352,6 +363,7 @@ class _CustomDropdown extends StatelessWidget {
   final String? Function(String?)? validator;
 
   const _CustomDropdown({
+    required this.theme,
     required this.value,
     required this.hint,
     required this.items,
@@ -370,16 +382,19 @@ class _CustomDropdown extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
         filled: true,
-        fillColor: Colors.grey.shade100,
+        fillColor: theme.cardColor,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
-      dropdownColor: Colors.white,
-      icon: const Icon(Icons.keyboard_arrow_down),
+      dropdownColor: theme.cardColor,
+      icon: Icon(
+        Icons.keyboard_arrow_down,
+        color: theme.colorScheme.onSurface,
+      ),
       items: items,
       onChanged: onChanged,
       validator: validator,
-      style: Theme.of(context).textTheme.bodyMedium,
+      style: theme.textTheme.bodyMedium,
       isExpanded: true,
     );
   }

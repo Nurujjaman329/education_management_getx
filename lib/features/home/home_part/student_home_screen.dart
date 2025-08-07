@@ -5,7 +5,6 @@ import 'package:edex_365_getx/features/student_panel/view/problem_post_view.dart
 import 'package:edex_365_getx/features/student_panel/view/transaction_history_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/config/app_colors.dart';
 
 
 class StudentHomeScreen extends StatefulWidget {
@@ -34,6 +33,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Or use context.theme from GetX
+
     final List<Widget> pages = [
       const StudentHomeView(),
       ProblemPostView(),
@@ -42,17 +43,17 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: _selectedIndex != 0
           ? AppBar(
               automaticallyImplyLeading: false,
-              backgroundColor: AppColors.primary,
+              backgroundColor: theme.colorScheme.primary,
               elevation: 0,
               centerTitle: true,
               title: Text(
                 _titles[_selectedIndex],
-                style: const TextStyle(
-                  color: AppColors.background,
+                style: TextStyle(
+                  color: theme.scaffoldBackgroundColor,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
                 ),
@@ -66,8 +67,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
           : null,
       body: SafeArea(child: pages[_selectedIndex]),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.background,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.scaffoldBackgroundColor,
         onPressed: () {
           authController.logout();
         },
@@ -78,9 +79,9 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.disabled,
-        backgroundColor: AppColors.surface,
+        selectedItemColor: theme.colorScheme.primary,
+        unselectedItemColor: theme.disabledColor,
+        backgroundColor: theme.colorScheme.surface,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.edit_note), label: 'Post'),
@@ -91,3 +92,4 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     );
   }
 }
+

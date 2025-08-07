@@ -55,76 +55,78 @@ class _EditProfileViewState extends State<EditProfileView> {
     }
   }
 
-  Future<void> _selectDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDob ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: Colors.white,
-              onSurface: AppColors.textPrimary,
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.primary,
-              ),
+Future<void> _selectDate() async {
+  final picked = await showDatePicker(
+    context: context,
+    initialDate: _selectedDob ?? DateTime.now(),
+    firstDate: DateTime(1900),
+    lastDate: DateTime.now(),
+    builder: (context, child) {
+      final theme = Theme.of(context);
+      return Theme(
+        data: theme.copyWith(
+          colorScheme: theme.colorScheme.copyWith(
+            primary: theme.colorScheme.primary,
+            onPrimary: theme.colorScheme.onPrimary,
+            onSurface: theme.colorScheme.onSurface,
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.primary,
             ),
           ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedDob = picked;
-        _dobController.text = DateFormat('dd MMM yyyy').format(picked);
-      });
-    }
-  }
-
-  Future<void> _submit() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      final updateBody = UpdateDetailsResponseBody(
-        id: _authController.userId.value,
-        name: _nameController.text,
-        email: _emailController.text,
-        password: '', // Password updates handled separately
-        dob: _selectedDob,
-        school: _schoolController.text,
-        image: _selectedImage.value,
+        ),
+        child: child!,
       );
+    },
+  );
+  if (picked != null) {
+    setState(() {
+      _selectedDob = picked;
+      _dobController.text = DateFormat('dd MMM yyyy').format(picked);
+    });
+  }
+}
 
-      try {
-        await _sharedController.updateUser(updateBody);
-        Get.back(); // Close the edit view
-        Get.snackbar(
-          'Success',
-          'Profile updated successfully',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.success,
-          colorText: Colors.white,
-        );
-      } catch (e) {
-        Get.snackbar(
-          'Error',
-          e.toString(),
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.error,
-          colorText: Colors.white,
-        );
-      }
+Future<void> _submit() async {
+  if (_formKey.currentState?.validate() ?? false) {
+    final updateBody = UpdateDetailsResponseBody(
+      id: _authController.userId.value,
+      name: _nameController.text,
+      email: _emailController.text,
+      password: '', // Password updates handled separately
+      dob: _selectedDob,
+      school: _schoolController.text,
+      image: _selectedImage.value,
+    );
+
+    try {
+      await _sharedController.updateUser(updateBody);
+      Get.back(); // Close the edit view
+      Get.snackbar(
+        'Success',
+        'Profile updated successfully',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        colorText: Theme.of(context).colorScheme.onSecondary,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Theme.of(context).colorScheme.error,
+        colorText: Theme.of(context).colorScheme.onError,
+      );
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: const CustomCurvedAppBar(title: "Edit Profile"),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -182,7 +184,7 @@ class _EditProfileViewState extends State<EditProfileView> {
               // Form Fields
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -200,20 +202,32 @@ class _EditProfileViewState extends State<EditProfileView> {
                       controller: _nameController,
                       decoration: InputDecoration(
                         labelText: 'Full Name',
-                        labelStyle: const TextStyle(color: AppColors.textSecondary),
-                        prefixIcon: const Icon(Icons.person, color: AppColors.primary),
+                        labelStyle: TextStyle(
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: theme.colorScheme.primary,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.divider),
+                          borderSide: BorderSide(
+                            color: theme.dividerColor,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.primary),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                          ),
                         ),
                       ),
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      validator: (value) =>
-                          value?.isEmpty ?? true ? 'Please enter your name' : null,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                      ),
+                      validator: (value) => value?.isEmpty ?? true
+                          ? 'Please enter your name'
+                          : null,
                     ),
                     const SizedBox(height: 16),
 
@@ -222,22 +236,35 @@ class _EditProfileViewState extends State<EditProfileView> {
                       controller: _emailController,
                       decoration: InputDecoration(
                         labelText: 'Email',
-                        labelStyle: const TextStyle(color: AppColors.textSecondary),
-                        prefixIcon: const Icon(Icons.email, color: AppColors.primary),
+                        labelStyle: TextStyle(
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.email,
+                          color: theme.colorScheme.primary,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.divider),
+                          borderSide: BorderSide(
+                            color: theme.dividerColor,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.primary),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                          ),
                         ),
                       ),
-                      style: const TextStyle(color: AppColors.textPrimary),
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                      ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
-                        if (value?.isEmpty ?? true) return 'Please enter your email';
-                        if (!value!.contains('@')) return 'Please enter a valid email';
+                        if (value?.isEmpty ?? true)
+                          return 'Please enter your email';
+                        if (!value!.contains('@'))
+                          return 'Please enter a valid email';
                         return null;
                       },
                     ),
@@ -248,18 +275,29 @@ class _EditProfileViewState extends State<EditProfileView> {
                       controller: _schoolController,
                       decoration: InputDecoration(
                         labelText: 'School (Optional)',
-                        labelStyle: const TextStyle(color: AppColors.textSecondary),
-                        prefixIcon: const Icon(Icons.school, color: AppColors.primary),
+                        labelStyle: TextStyle(
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.school,
+                          color: theme.colorScheme.primary,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.divider),
+                          borderSide: BorderSide(
+                            color: theme.dividerColor,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.primary),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                          ),
                         ),
                       ),
-                      style: const TextStyle(color: AppColors.textPrimary),
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                      ),
                     ),
                     const SizedBox(height: 16),
 
@@ -268,22 +306,36 @@ class _EditProfileViewState extends State<EditProfileView> {
                       controller: _dobController,
                       decoration: InputDecoration(
                         labelText: 'Date of Birth (Optional)',
-                        labelStyle: const TextStyle(color: AppColors.textSecondary),
-                        prefixIcon: const Icon(Icons.calendar_today, color: AppColors.primary),
+                        labelStyle: TextStyle(
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.calendar_today,
+                          color: theme.colorScheme.primary,
+                        ),
                         suffixIcon: IconButton(
-                          icon: const Icon(Icons.edit, color: AppColors.primary),
+                          icon: Icon(
+                            Icons.edit,
+                            color: theme.colorScheme.primary,
+                          ),
                           onPressed: _selectDate,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.divider),
+                          borderSide: BorderSide(
+                            color: theme.dividerColor,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.primary),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                          ),
                         ),
                       ),
-                      style: const TextStyle(color: AppColors.textPrimary),
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                      ),
                       readOnly: true,
                       onTap: _selectDate,
                     ),
@@ -298,19 +350,18 @@ class _EditProfileViewState extends State<EditProfileView> {
                 child: ElevatedButton(
                   onPressed: _submit,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     elevation: 2,
                   ),
-                  child: const Text(
+                  child: Text(
                     'Save Changes',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: theme.textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
                     ),
                   ),
                 ),

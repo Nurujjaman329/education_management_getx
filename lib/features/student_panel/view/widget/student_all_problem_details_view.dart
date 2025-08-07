@@ -1,4 +1,3 @@
-import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/core/widgets/custom_curved_appbar.dart';
 import 'package:edex_365_getx/features/student_panel/model/student_problem_list_response_model.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,8 @@ class StudentAllProblemDetailsView extends StatelessWidget {
   const StudentAllProblemDetailsView({super.key, required this.problem});
 
   void _showFullScreenImage(BuildContext context, String imageUrl) {
+    final theme = Theme.of(context);
+    
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -16,10 +17,10 @@ class StudentAllProblemDetailsView extends StatelessWidget {
           backgroundColor: Colors.black,
           appBar: AppBar(
             backgroundColor: Colors.black,
-            iconTheme: const IconThemeData(color: Colors.white),
+            iconTheme: IconThemeData(color: theme.colorScheme.onBackground),
             actions: [
               IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(Icons.close, color: theme.colorScheme.onBackground),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -45,7 +46,12 @@ class StudentAllProblemDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: const CustomCurvedAppBar(
         title: "Problem Details",
         showBackButton: true,
@@ -83,24 +89,24 @@ class StudentAllProblemDetailsView extends StatelessWidget {
                           if (loadingProgress == null) return child;
                           return Container(
                             height: 220,
-                            color: AppColors.background,
+                            color: colorScheme.surface,
                             child: Center(
                               child: CircularProgressIndicator(
                                 value: loadingProgress.expectedTotalBytes != null
                                     ? loadingProgress.cumulativeBytesLoaded /
                                         loadingProgress.expectedTotalBytes!
                                     : null,
-                                color: AppColors.primary,
+                                color: colorScheme.primary,
                               ),
                             ),
                           );
                         },
                         errorBuilder: (context, error, stackTrace) => Container(
                           height: 220,
-                          color: AppColors.surface,
-                          child: const Center(
+                          color: colorScheme.surfaceVariant,
+                          child: Center(
                             child: Icon(Icons.broken_image, 
-                              color: AppColors.disabled),
+                              color: theme.disabledColor),
                           ),
                         ),
                       ),
@@ -110,12 +116,12 @@ class StudentAllProblemDetailsView extends StatelessWidget {
               ),
             const SizedBox(height: 24),
             
-            // Rest of the problem details UI remains the same...
+            // Problem details card
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
@@ -128,15 +134,14 @@ class StudentAllProblemDetailsView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     children: [
-                      Icon(Icons.subject, size: 20, color: AppColors.primary),
-                      SizedBox(width: 8),
+                      Icon(Icons.subject, size: 20, color: colorScheme.primary),
+                      const SizedBox(width: 8),
                       Text(
                         "Subject",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textSecondary,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: textTheme.bodyMedium?.color?.withOpacity(0.7),
                         ),
                       ),
                     ],
@@ -144,23 +149,20 @@ class StudentAllProblemDetailsView extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     problem.subject,
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 16),
                   
-                  const Row(
+                  Row(
                     children: [
-                      Icon(Icons.topic, size: 20, color: AppColors.primary),
-                      SizedBox(width: 8),
+                      Icon(Icons.topic, size: 20, color: colorScheme.primary),
+                      const SizedBox(width: 8),
                       Text(
                         "Topic",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textSecondary,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: textTheme.bodyMedium?.color?.withOpacity(0.7),
                         ),
                       ),
                     ],
@@ -168,34 +170,29 @@ class StudentAllProblemDetailsView extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     problem.topic,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: AppColors.textPrimary.withOpacity(0.9),
+                    style: textTheme.bodyLarge?.copyWith(
+                      color: textTheme.bodyLarge?.color?.withOpacity(0.9),
                     ),
                   ),
                   const SizedBox(height: 16),
                   
-                  const Text(
+                  Text(
                     "Description",
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.background,
+                      color: colorScheme.surfaceVariant,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       problem.description,
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: textTheme.bodyMedium?.copyWith(
                         height: 1.5,
-                        color: AppColors.textSecondary,
                       ),
                     ),
                   ),
@@ -209,21 +206,18 @@ class StudentAllProblemDetailsView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.background,
+                  color: colorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.calendar_today, size: 16, 
-                      color: AppColors.textSecondary),
+                    Icon(Icons.calendar_today, size: 16, 
+                      color: textTheme.bodySmall?.color),
                     const SizedBox(width: 8),
                     Text(
                       "Posted on: ${problem.getDateby}",
-                      style: const TextStyle(
-                        fontSize: 13, 
-                        color: AppColors.textSecondary,
-                      ),
+                      style: textTheme.bodySmall,
                     ),
                   ],
                 ),

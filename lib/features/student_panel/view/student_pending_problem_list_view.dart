@@ -14,9 +14,9 @@ class StudentPendingProblemListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<StudentProblemListController>();
-
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
      appBar: const CustomCurvedAppBar(title: "Pending List",showBackButton: true,),
       body:Obx(() {
           if (controller.isLoading.value) {

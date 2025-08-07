@@ -2,7 +2,6 @@ import 'package:edex_365_getx/core/widgets/custom_curved_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
-import 'package:edex_365_getx/core/config/app_colors.dart';
 
 class UpdatePasswordForm extends StatefulWidget {
   final String userId;
@@ -29,226 +28,219 @@ class _UpdatePasswordFormState extends State<UpdatePasswordForm> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final controller = Get.find<SharedController>();
+@override
+Widget build(BuildContext context) {
+  final controller = Get.find<SharedController>();
+  final theme = Theme.of(context);
+  final colorScheme = theme.colorScheme;
+  final textTheme = theme.textTheme;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: const CustomCurvedAppBar(title: "Change Password"),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Obx(() {
-          return Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                // Header
-                const Text(
-                  'Update Your Password',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
+  return Scaffold(
+    backgroundColor: theme.scaffoldBackgroundColor,
+    appBar: const CustomCurvedAppBar(title: "Change Password"),
+    body: SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Obx(() {
+        return Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              // Header
+              Text(
+                'Update Your Password',
+                style: textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Create a strong and secure password',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSecondary,
-                  ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Create a strong and secure password',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface.withOpacity(0.6),
                 ),
-                const SizedBox(height: 32),
+              ),
+              const SizedBox(height: 32),
 
-                // Old Password Field
-                const Text(
-                  'Current Password',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
-                  ),
+              // Old Password Field
+              Text(
+                'Current Password',
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
                 ),
-                const SizedBox(height: 8),
-                Obx(() => TextFormField(
-                  controller: oldPassCtrl,
-                  obscureText: !_showOldPassword.value,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _showOldPassword.value
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: AppColors.textSecondary,
-                      ),
-                      onPressed: () {
-                        _showOldPassword.toggle();
-                      },
-                    ),
+              ),
+              const SizedBox(height: 8),
+              Obx(() => TextFormField(
+                controller: oldPassCtrl,
+                obscureText: !_showOldPassword.value,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: colorScheme.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
                   ),
-                  validator: (val) =>
-                      val == null || val.isEmpty ? 'Enter your current password' : null,
-                )),
-                const SizedBox(height: 20),
-
-                // New Password Field
-                const Text(
-                  'New Password',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Obx(() => TextFormField(
-                  controller: newPassCtrl,
-                  obscureText: !_showNewPassword.value,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _showOldPassword.value
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: colorScheme.onSurface.withOpacity(0.6),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _showNewPassword.value
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: AppColors.textSecondary,
-                      ),
-                      onPressed: () {
-                        _showNewPassword.toggle();
-                      },
-                    ),
-                  ),
-                  validator: (val) =>
-                      val == null || val.isEmpty ? 'Enter a new password' : null,
-                )),
-                const SizedBox(height: 20),
-
-                // Confirm Password Field
-                const Text(
-                  'Confirm New Password',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Obx(() => TextFormField(
-                  controller: confirmPassCtrl,
-                  obscureText: !_showConfirmPassword.value,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _showConfirmPassword.value
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: AppColors.textSecondary,
-                      ),
-                      onPressed: () {
-                        _showConfirmPassword.toggle();
-                      },
-                    ),
-                  ),
-                  validator: (val) =>
-                      val != newPassCtrl.text ? 'Passwords do not match' : null,
-                )),
-                const SizedBox(height: 32),
-
-                // Submit Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        await controller.updatePassword(
-                          userId: widget.userId,
-                          oldPassword: oldPassCtrl.text.trim(),
-                          newPassword: newPassCtrl.text.trim(),
-                        );
-
-                        if (controller.successMessage.isNotEmpty) {
-                          Get.snackbar(
-                            "Success",
-                            controller.successMessage.value,
-                            colorText: Colors.white,
-                            backgroundColor: AppColors.success,
-                          );
-                        } else if (controller.errorMessage.isNotEmpty) {
-                          Get.snackbar(
-                            "Error",
-                            controller.errorMessage.value,
-                            colorText: Colors.white,
-                            backgroundColor: AppColors.error,
-                          );
-                        }
-                      }
+                    onPressed: () {
+                      _showOldPassword.toggle();
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: controller.isLoading.value
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 3,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Text(
-                            'Update Password',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
                 ),
-                const SizedBox(height: 16),
-              ],
-            ),
-          );
-        }),
-      ),
-    );
-  }
+                validator: (val) =>
+                    val == null || val.isEmpty ? 'Enter your current password' : null,
+              )),
+              const SizedBox(height: 20),
+
+              // New Password Field
+              Text(
+                'New Password',
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Obx(() => TextFormField(
+                controller: newPassCtrl,
+                obscureText: !_showNewPassword.value,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: colorScheme.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _showNewPassword.value
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                    onPressed: () {
+                      _showNewPassword.toggle();
+                    },
+                  ),
+                ),
+                validator: (val) =>
+                    val == null || val.isEmpty ? 'Enter a new password' : null,
+              )),
+              const SizedBox(height: 20),
+
+              // Confirm Password Field
+              Text(
+                'Confirm New Password',
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Obx(() => TextFormField(
+                controller: confirmPassCtrl,
+                obscureText: !_showConfirmPassword.value,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: colorScheme.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _showConfirmPassword.value
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                    onPressed: () {
+                      _showConfirmPassword.toggle();
+                    },
+                  ),
+                ),
+                validator: (val) =>
+                    val != newPassCtrl.text ? 'Passwords do not match' : null,
+              )),
+              const SizedBox(height: 32),
+
+              // Submit Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      await controller.updatePassword(
+                        userId: widget.userId,
+                        oldPassword: oldPassCtrl.text.trim(),
+                        newPassword: newPassCtrl.text.trim(),
+                      );
+
+                      if (controller.successMessage.isNotEmpty) {
+                        Get.snackbar(
+                          "Success",
+                          controller.successMessage.value,
+                          colorText: colorScheme.onSecondary,
+                          backgroundColor: colorScheme.secondary,
+                        );
+                      } else if (controller.errorMessage.isNotEmpty) {
+                        Get.snackbar(
+                          "Error",
+                          controller.errorMessage.value,
+                          colorText: colorScheme.onError,
+                          backgroundColor: colorScheme.error,
+                        );
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: controller.isLoading.value
+                      ? SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                            color: colorScheme.onPrimary,
+                          ),
+                        )
+                      : Text(
+                          'Update Password',
+                          style: textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      }),
+    ),
+  );
+}
 }
