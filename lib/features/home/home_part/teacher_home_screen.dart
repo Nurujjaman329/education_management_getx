@@ -33,7 +33,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
     final theme = Theme.of(context); // Or use context.theme from GetX
 
     final List<Widget> pages = [
-     TeacherProblemView(),
+     const TeacherProblemView(),
       const Text('Wallet'),
       const SettingsContent(),
     ];
