@@ -10,7 +10,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -29,6 +28,7 @@ jobs:
 
     - name: Run tests
       run: flutter test --coverage
+      continue-on-error: false
 
     - name: Build APK (debug)
       run: flutter build apk --debug
