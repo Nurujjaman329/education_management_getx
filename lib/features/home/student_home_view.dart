@@ -1,4 +1,3 @@
-import 'package:edex_365_getx/core/utils/back_press_utils.dart';
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
 import 'package:edex_365_getx/features/student_panel/model/student_problem_list_response_model.dart';
@@ -48,57 +47,55 @@ class _StudentHomeViewState extends State<StudentHomeView> {
 @override
 Widget build(BuildContext context) {
   final theme = Theme.of(context);
-  return PopScope(
-    onPopInvoked: (didpop) => BackPressHandler.handleWillPop(context),
-    child: RefreshIndicator(
-      onRefresh: () async {
-        final userId = authController.loginResponse.value?.id ??
-            authController.userId.value;
-        if (userId.isNotEmpty) {
-          await controller.fetchAll(userId);
-        }
-      },
-      child: Obx(() {
-        if (controller.isLoading.value) {
-          return Center(
-            child: CircularProgressIndicator(
-              color: theme.colorScheme.primary,
-            ),
-          );
-        }
-
-        if (controller.errorMessage.isNotEmpty) {
-          return Center(
-            child: Text(
-              controller.errorMessage.value,
-              style: TextStyle(
-                color: theme.colorScheme.error,
-                fontSize: 16,
-              ),
-            ),
-          );
-        }
-
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              _buildWelcomeHeader(theme),
-              const SizedBox(height: 20),
-              _buildQuickStats(theme),
-              const SizedBox(height: 24),
-              _buildLearningProgress(theme),
-              const SizedBox(height: 24),
-              _buildChartsSection(theme),
-              const SizedBox(height: 24),
-              _buildRecentProblems(theme),
-            ],
+  return RefreshIndicator(
+    onRefresh: () async {
+      final userId = authController.loginResponse.value?.id ??
+          authController.userId.value;
+      if (userId.isNotEmpty) {
+        await controller.fetchAll(userId);
+      }
+    },
+    child: Obx(() {
+      if (controller.isLoading.value) {
+        return Center(
+          child: CircularProgressIndicator(
+            color: theme.colorScheme.primary,
           ),
         );
-      }),
-    ),
+      }
+  
+      if (controller.errorMessage.isNotEmpty) {
+        return Center(
+          child: Text(
+            controller.errorMessage.value,
+            style: TextStyle(
+              color: theme.colorScheme.error,
+              fontSize: 16,
+            ),
+          ),
+        );
+      }
+  
+      return SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _buildWelcomeHeader(theme),
+            const SizedBox(height: 20),
+            _buildQuickStats(theme),
+            const SizedBox(height: 24),
+            _buildLearningProgress(theme),
+            const SizedBox(height: 24),
+            _buildChartsSection(theme),
+            const SizedBox(height: 24),
+            _buildRecentProblems(theme),
+          ],
+        ),
+      );
+    }),
   );
 }
+
 
 
 

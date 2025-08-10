@@ -88,6 +88,9 @@ Future<void> _selectDate() async {
   }
 }
 
+
+
+
 Future<void> _submit() async {
   if (_formKey.currentState?.validate() ?? false) {
     final updateBody = UpdateDetailsResponseBody(
@@ -102,25 +105,68 @@ Future<void> _submit() async {
 
     try {
       await _sharedController.updateUser(updateBody);
+
+      if (!mounted) return; // <-- Add this check!
+
       Get.back(); // Close the edit view
+
+      final theme = Theme.of(context); // Use context only after mounted check
       Get.snackbar(
         'Success',
         'Profile updated successfully',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        colorText: Theme.of(context).colorScheme.onSecondary,
+        backgroundColor: theme.colorScheme.secondary,
+        colorText: theme.colorScheme.onSecondary,
       );
     } catch (e) {
+      if (!mounted) return;
+
+      final theme = Theme.of(context);
       Get.snackbar(
         'Error',
         e.toString(),
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Theme.of(context).colorScheme.error,
-        colorText: Theme.of(context).colorScheme.onError,
+        backgroundColor: theme.colorScheme.error,
+        colorText: theme.colorScheme.onError,
       );
     }
   }
 }
+
+
+// Future<void> _submit() async {
+//   if (_formKey.currentState?.validate() ?? false) {
+//     final updateBody = UpdateDetailsResponseBody(
+//       id: _authController.userId.value,
+//       name: _nameController.text,
+//       email: _emailController.text,
+//       password: '', // Password updates handled separately
+//       dob: _selectedDob,
+//       school: _schoolController.text,
+//       image: _selectedImage.value,
+//     );
+
+//     try {
+//       await _sharedController.updateUser(updateBody);
+//       Get.back(); // Close the edit view
+//       Get.snackbar(
+//         'Success',
+//         'Profile updated successfully',
+//         snackPosition: SnackPosition.BOTTOM,
+//         backgroundColor: Theme.of(context).colorScheme.secondary,
+//         colorText: Theme.of(context).colorScheme.onSecondary,
+//       );
+//     } catch (e) {
+//       Get.snackbar(
+//         'Error',
+//         e.toString(),
+//         snackPosition: SnackPosition.BOTTOM,
+//         backgroundColor: Theme.of(context).colorScheme.error,
+//         colorText: Theme.of(context).colorScheme.onError,
+//       );
+//     }
+//   }
+// }
 
   @override
   Widget build(BuildContext context) {
