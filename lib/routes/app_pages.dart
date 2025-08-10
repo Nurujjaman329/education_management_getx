@@ -64,20 +64,19 @@ class AppPages {
       page: () => const StudentProblemListView(),
       binding: StudentProblemListBinding(),
     ),
-  GetPage(
-  name: AppRoutes.solutionAndClaimChat,
-  page: () {
-    final arguments = Get.arguments as Map<String, dynamic>?;
-    final postId = arguments?['postId'] ?? '';
-    return SolutionAndClaimChatView(postId: postId);
-  },
-  bindings: [
-    SolutionAndClaimChatBinding(),
-    SharedBinding(), // <-- Add this
-  ],
-    transition: Transition.leftToRight,
-  transitionDuration: const Duration(milliseconds: 400),
-),
-
+    GetPage(
+      name: AppRoutes.solutionAndClaimChat,
+      page: () {
+        final arguments = Get.arguments as Map<String, dynamic>?;
+        final postId = arguments?['postId'] ?? '';
+        return SolutionAndClaimChatView(postId: postId);
+      },
+      bindings: [
+        SolutionAndClaimChatBinding(),
+        SharedBinding(), // <-- Add this
+      ],
+      transition: Transition.leftToRight,
+      transitionDuration: const Duration(milliseconds: 400),
+    ),
   ];
 }
