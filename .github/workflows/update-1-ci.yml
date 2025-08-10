@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - update-1
-    tags:
-      - 'v*.*.*'   # runs on version tags like v1.0.0
   pull_request:
     branches:
       - update-1
@@ -35,27 +33,20 @@ jobs:
     - name: Build APK (release)
       run: flutter build apk --release
 
-    - name: Upload APK artifact
+    - name: Upload APK artifact (workflow only)
       uses: actions/upload-artifact@v4
       with:
         name: app-release.apk
         path: build/app/outputs/flutter-apk/app-release.apk
 
-    # Create GitHub Release on tags only
-    - name: Create GitHub Release
-      if: startsWith(github.ref, 'refs/tags/')
-      id: create_release
+    - name: Create or Update GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.ref_name }}
+        tag_name: update-1-latest
+        name: "Latest APK from update-1"
+        body: "Automated build from branch update-1"
+        draft: false
+        prerelease: true
+        files: build/app/outputs/flutter-apk/app-release.apk
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload APK to Release
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/app/outputs/flutter-apk/app-release.apk
-        asset_name: app-release.apk
-        asset_content_type: application/vnd.android.package-archive
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
