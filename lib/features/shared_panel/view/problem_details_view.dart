@@ -194,7 +194,7 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
             tag: 'problem_${problem.id}',
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Container(
+              child: SizedBox(
                 height: 220,
                 child: Image.network(
                   problem.photo,

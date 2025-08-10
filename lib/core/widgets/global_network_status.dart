@@ -18,7 +18,7 @@ class GlobalNetworkStatus extends StatelessWidget {
         // Show full-screen no connection UI
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
-          body: SafeArea(
+          body: const SafeArea(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

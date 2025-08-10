@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
 import 'package:edex_365_getx/features/student_panel/controller/student_problem_post_controller.dart';

@@ -1,4 +1,3 @@
-import 'package:edex_365_getx/core/config/app_colors.dart';
 import 'package:edex_365_getx/core/utils/back_press_utils.dart';
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/controller/shared_controller.dart';
@@ -223,7 +222,7 @@ Widget _buildQuickStats(ThemeData theme) {
             title: "Pending",
             value: controller.pendingProblems.length.toString(),
             icon: Icons.pending_actions,
-            color: theme.colorScheme.tertiary ?? theme.colorScheme.primaryContainer,
+            color: theme.colorScheme.tertiary,
             progress: controller.totalProblems.isNotEmpty
                 ? controller.pendingProblems.length / controller.totalProblems.length
                 : 0.0,
@@ -406,7 +405,7 @@ Widget _buildChartsSection(ThemeData theme) {
                 child: SfCircularChart(
                   palette: [
                     theme.colorScheme.secondary,
-                    theme.colorScheme.tertiary ?? theme.colorScheme.primaryContainer,
+                    theme.colorScheme.tertiary,
                     theme.colorScheme.primary,
                   ],
                   legend: Legend(
@@ -422,7 +421,7 @@ Widget _buildChartsSection(ThemeData theme) {
                         ChartData(
                           'Pending',
                           pending,
-                          theme.colorScheme.tertiary ?? theme.colorScheme.primaryContainer,
+                          theme.colorScheme.tertiary,
                         ),
                         if (others > 0)
                           ChartData('Others', others, theme.colorScheme.primary),
@@ -569,7 +568,7 @@ Widget _buildProblemCard(StudentProblemListResponseModel problem, ThemeData them
               margin: const EdgeInsets.only(right: 12),
               decoration: BoxDecoration(
                 color: isPending
-                    ? (theme.colorScheme.tertiary ?? theme.colorScheme.primaryContainer)
+                    ? (theme.colorScheme.tertiary)
                     : isSolved
                         ? theme.colorScheme.secondary
                         : theme.disabledColor,

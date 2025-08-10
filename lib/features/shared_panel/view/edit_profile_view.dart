@@ -261,10 +261,12 @@ Future<void> _submit() async {
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
-                        if (value?.isEmpty ?? true)
+                        if (value?.isEmpty ?? true) {
                           return 'Please enter your email';
-                        if (!value!.contains('@'))
+                        }
+                        if (!value!.contains('@')) {
                           return 'Please enter a valid email';
+                        }
                         return null;
                       },
                     ),
