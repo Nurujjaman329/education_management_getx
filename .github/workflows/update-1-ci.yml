@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - update-1
+    tags:
+      - 'v*.*.*'   # runs on version tags like v1.0.0
   pull_request:
     branches:
       - update-1
@@ -38,3 +40,22 @@ jobs:
       with:
         name: app-release.apk
         path: build/app/outputs/flutter-apk/app-release.apk
+
+    # Create GitHub Release on tags only
+    - name: Create GitHub Release
+      if: startsWith(github.ref, 'refs/tags/')
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ github.ref_name }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload APK to Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: build/app/outputs/flutter-apk/app-release.apk
+        asset_name: app-release.apk
+        asset_content_type: application/vnd.android.package-archive
