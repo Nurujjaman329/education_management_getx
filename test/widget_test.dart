@@ -28,7 +28,7 @@ void main() {
 }
 
 class TestCounterApp extends StatefulWidget {
-  const TestCounterApp({Key? key}) : super(key: key);
+  const TestCounterApp({super.key});
 
   @override
   State<TestCounterApp> createState() => _TestCounterAppState();
