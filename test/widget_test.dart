@@ -11,20 +11,17 @@ import 'package:edex_365_getx/main.dart';
 
 void main() {
   testWidgets('App loads and shows a widget', (WidgetTester tester) async {
-    // Build your app
     await tester.pumpWidget(const MyApp());
-
-    // Wait for animations and frames to settle
     await tester.pumpAndSettle();
 
-    // Example: check if your app shows some welcome text or app name
-    // Replace 'Welcome' below with actual text from your home screen
-    expect(find.text('Welcome'), findsOneWidget);
+    // Replace this with text your app actually shows
+    expect(find.text('Edex 365'), findsOneWidget);
 
-    // If you don't have 'Welcome' text, replace with a widget type you expect
-    // e.g. expect(find.byType(SomeWidget), findsOneWidget);
+    // Or fallback to testing widget type
+    // expect(find.byType(Scaffold), findsOneWidget);
   });
 }
+
 
 
 
