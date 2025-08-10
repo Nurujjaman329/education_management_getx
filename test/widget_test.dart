@@ -12,8 +12,6 @@ import 'package:edex_365_getx/main.dart';
 
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-
   testWidgets('Print widget tree', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
@@ -21,6 +19,7 @@ void main() {
     debugDumpApp();
   });
 }
+
 
 
 
