@@ -15,7 +15,7 @@ class AppThemes {
     colorScheme: const ColorScheme.light(
       primary: AppColors.primary,
       secondary: AppColors.secondary,
-      background: AppColors.background,
+    //  background: AppColors.background,
       surface: AppColors.surface,
       error: AppColors.error,
     ),
@@ -34,7 +34,7 @@ class AppThemes {
     colorScheme: const ColorScheme.dark(
       primary: AppColors.darkPrimary,
       secondary: AppColors.darkSecondary,
-      background: AppColors.darkBackground,
+    //  background: AppColors.darkBackground,
       surface: AppColors.darkSurface,
       error: AppColors.darkError,
     ),

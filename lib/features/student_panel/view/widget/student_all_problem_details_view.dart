@@ -17,10 +17,10 @@ class StudentAllProblemDetailsView extends StatelessWidget {
           backgroundColor: Colors.black,
           appBar: AppBar(
             backgroundColor: Colors.black,
-            iconTheme: IconThemeData(color: theme.colorScheme.onBackground),
+            iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
             actions: [
               IconButton(
-                icon: Icon(Icons.close, color: theme.colorScheme.onBackground),
+                icon: Icon(Icons.close, color: theme.colorScheme.onSurface),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -103,7 +103,7 @@ class StudentAllProblemDetailsView extends StatelessWidget {
                         },
                         errorBuilder: (context, error, stackTrace) => Container(
                           height: 220,
-                          color: colorScheme.surfaceVariant,
+                          color: colorScheme.surfaceContainerHighest,
                           child: Center(
                             child: Icon(Icons.broken_image, 
                               color: theme.disabledColor),
@@ -186,7 +186,7 @@ class StudentAllProblemDetailsView extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: colorScheme.surfaceVariant,
+                      color: colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -206,7 +206,7 @@ class StudentAllProblemDetailsView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: colorScheme.surfaceVariant,
+                  color: colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(

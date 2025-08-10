@@ -105,7 +105,7 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -213,7 +213,7 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
                     );
                   },
                   errorBuilder: (context, error, stackTrace) => Container(
-                    color: theme.colorScheme.surfaceVariant,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     child: Center(
                       child: Icon(
                         Icons.broken_image,
@@ -334,7 +334,7 @@ class _ProblemDetailsViewState extends State<ProblemDetailsView> {
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
       ),
       constraints: const BoxConstraints(minHeight: 300),

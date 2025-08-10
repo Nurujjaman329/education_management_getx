@@ -12,9 +12,12 @@ class BackPressHandler {
     if (canExit) {
       _lastPressed = now;
 
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        
+      // Capture the ScaffoldMessenger before async gap (though here it's sync, it's safer)
+      final messenger = ScaffoldMessenger.of(context);
+
+      // Remove current snackbar and show a new one
+      messenger.removeCurrentSnackBar();
+      messenger.showSnackBar(
         const SnackBar(
           backgroundColor: AppColors.primary,
           content: Text('Press back again to exit'),
@@ -28,3 +31,4 @@ class BackPressHandler {
     return true; // Exit app
   }
 }
+

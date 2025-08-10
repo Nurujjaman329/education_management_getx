@@ -49,8 +49,8 @@ class _StudentHomeViewState extends State<StudentHomeView> {
 @override
 Widget build(BuildContext context) {
   final theme = Theme.of(context);
-  return WillPopScope(
-    onWillPop: () => BackPressHandler.handleWillPop(context),
+  return PopScope(
+    onPopInvoked: (didpop) => BackPressHandler.handleWillPop(context),
     child: RefreshIndicator(
       onRefresh: () async {
         final userId = authController.loginResponse.value?.id ??
@@ -67,7 +67,7 @@ Widget build(BuildContext context) {
             ),
           );
         }
-    
+
         if (controller.errorMessage.isNotEmpty) {
           return Center(
             child: Text(
@@ -79,7 +79,7 @@ Widget build(BuildContext context) {
             ),
           );
         }
-    
+
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -100,6 +100,8 @@ Widget build(BuildContext context) {
     ),
   );
 }
+
+
 
 Widget _buildWelcomeHeader(ThemeData theme) {
   final sharedController = Get.find<SharedController>();
