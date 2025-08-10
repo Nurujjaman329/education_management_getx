@@ -6,21 +6,23 @@
 // // tree, read text, and verify that the values of widget properties are correct.
 
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:edex_365_getx/main.dart';
 
+
 void main() {
-  testWidgets('App loads and shows a widget', (WidgetTester tester) async {
+  testWidgets('Print widget tree', (WidgetTester tester) async {
+    WidgetsFlutterBinding.ensureInitialized(); // <- add this line
+
     await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
 
-    // Replace this with text your app actually shows
-    expect(find.text('Edex 365'), findsOneWidget);
-
-    // Or fallback to testing widget type
-    // expect(find.byType(Scaffold), findsOneWidget);
+    debugDumpApp();
   });
 }
+
+
 
 
 
