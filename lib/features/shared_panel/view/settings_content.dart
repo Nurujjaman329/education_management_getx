@@ -8,7 +8,6 @@ import 'package:edex_365_getx/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 class SettingsContent extends StatelessWidget {
   const SettingsContent({super.key});
 
@@ -38,21 +37,23 @@ class SettingsContent extends StatelessWidget {
             Obx(() {
               if (sharedController.isLoading.value) {
                 return Center(
-                  child: CircularProgressIndicator(color: theme.colorScheme.primary),
+                  child: CircularProgressIndicator(
+                      color: theme.colorScheme.primary),
                 );
               }
-      
+
               if (sharedController.error.value != null) {
                 return Center(
                   child: Text(
                     sharedController.error.value!,
-                    style: TextStyle(color: theme.colorScheme.error, fontSize: 16),
+                    style:
+                        TextStyle(color: theme.colorScheme.error, fontSize: 16),
                   ),
                 );
               }
-      
+
               final user = sharedController.userDetailsList.firstOrNull;
-      
+
               return Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -72,7 +73,8 @@ class SettingsContent extends StatelessWidget {
                     CircleAvatar(
                       radius: 30,
                       backgroundColor: theme.colorScheme.primary,
-                      child: const Icon(Icons.person, size: 30, color: Colors.white),
+                      child: const Icon(Icons.person,
+                          size: 30, color: Colors.white),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -117,7 +119,7 @@ class SettingsContent extends StatelessWidget {
               );
             }),
             const SizedBox(height: 32),
-      
+
             // Account Settings Section
             Text(
               'Account Settings',
@@ -149,16 +151,17 @@ class SettingsContent extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).push(
                         PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => const UserInfoDetailsView(),
+                          pageBuilder: (_, __, ___) =>
+                              const UserInfoDetailsView(),
                           transitionsBuilder: (_, animation, __, child) {
                             const begin = Offset(1.0, 0.0);
                             const end = Offset.zero;
                             const curve = Curves.easeInOut;
-      
+
                             final tween = Tween(begin: begin, end: end)
                                 .chain(CurveTween(curve: curve));
                             final offsetAnimation = animation.drive(tween);
-      
+
                             return SlideTransition(
                               position: offsetAnimation,
                               child: child,
@@ -168,7 +171,11 @@ class SettingsContent extends StatelessWidget {
                       );
                     },
                   ),
-                  Divider(height: 1, indent: 16, endIndent: 16, color: theme.dividerColor),
+                  Divider(
+                      height: 1,
+                      indent: 16,
+                      endIndent: 16,
+                      color: theme.dividerColor),
                   _buildSettingsItem(
                     context: context,
                     icon: Icons.lock_outline,
@@ -182,11 +189,11 @@ class SettingsContent extends StatelessWidget {
                             const begin = Offset(1.0, 0.0);
                             const end = Offset.zero;
                             const curve = Curves.easeInOut;
-      
+
                             final tween = Tween(begin: begin, end: end)
                                 .chain(CurveTween(curve: curve));
                             final offsetAnimation = animation.drive(tween);
-      
+
                             return SlideTransition(
                               position: offsetAnimation,
                               child: child,
@@ -196,7 +203,25 @@ class SettingsContent extends StatelessWidget {
                       );
                     },
                   ),
-                  Divider(height: 1, indent: 16, endIndent: 16, color: theme.dividerColor),
+
+                  // 📌 New Skill Management Item
+                  _buildSettingsItem(
+                    context: context,
+                    icon: Icons.build_outlined,
+                    title: 'Skill Management',
+                    onTap: () {
+                      Get.toNamed(
+                        AppRoutes.teacherSkillManagement,
+                        arguments: {"userId": userId}, // pass userId if needed
+                      );
+                    },
+                  ),
+
+                  Divider(
+                      height: 1,
+                      indent: 16,
+                      endIndent: 16,
+                      color: theme.dividerColor),
                   _buildSettingsItem(
                     context: context,
                     icon: Icons.notifications_outlined,
@@ -206,7 +231,7 @@ class SettingsContent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-      
+
             // App Settings Section
             Text(
               'App Settings',
@@ -234,17 +259,23 @@ class SettingsContent extends StatelessWidget {
                   // 🔄 Dark Mode Toggle
                   Obx(() {
                     return SwitchListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 16),
                       title: Text(
                         themeController.isDarkMode ? 'Dark Mode' : 'Light Mode',
                         style: TextStyle(color: textColor),
                       ),
-                      secondary: Icon(Icons.color_lens_outlined, color: theme.colorScheme.primary),
+                      secondary: Icon(Icons.color_lens_outlined,
+                          color: theme.colorScheme.primary),
                       value: themeController.isDarkMode,
                       onChanged: themeController.toggleTheme,
                     );
                   }),
-                  Divider(height: 1, indent: 16, endIndent: 16, color: theme.dividerColor),
+                  Divider(
+                      height: 1,
+                      indent: 16,
+                      endIndent: 16,
+                      color: theme.dividerColor),
                   _buildSettingsItem(
                     context: context,
                     icon: Icons.help_outline,
@@ -254,7 +285,7 @@ class SettingsContent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-      
+
             // Logout Button
             SizedBox(
               width: double.infinity,
@@ -318,11 +349,11 @@ class SettingsContent extends StatelessWidget {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       leading: Icon(icon, color: theme.colorScheme.primary),
-      title: Text(title, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+      title: Text(title,
+          style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
       trailing: trailing ??
           Icon(Icons.chevron_right, color: theme.textTheme.bodyMedium?.color),
       onTap: onTap,
     );
   }
 }
-

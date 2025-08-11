@@ -20,6 +20,7 @@ class SharedController extends GetxController {
   var successMessage = ''.obs;
   var error = Rxn<String>();
   var responseMessage = ''.obs;
+  
 
   // Lists
   var versionList = <AcademyVersionListResponseModel>[].obs;
@@ -85,13 +86,25 @@ class SharedController extends GetxController {
 
   Future<void> fetchSubjectList() async {
     try {
-      errorMessage.value = '';
-      final subjects = await _service.fetchSubjectList();
-      subjectList.assignAll(subjects);
+      subjectList.assignAll(await _service.fetchSubjectList());
     } catch (e) {
-      errorMessage.value = 'Failed to fetch subjects';
       subjectList.clear();
       rethrow;
+    }
+  }
+
+
+    /// Prepare selection with already assigned subjects
+  void setSelectedSubjects(List<String> existingSubjects) {
+    selectedSubjectIds.assignAll(existingSubjects);
+  }
+
+  /// Toggle selection
+  void toggleSubject(String subjectId) {
+    if (selectedSubjectIds.contains(subjectId)) {
+      selectedSubjectIds.remove(subjectId);
+    } else {
+      selectedSubjectIds.add(subjectId);
     }
   }
 

@@ -13,7 +13,9 @@ import 'package:edex_365_getx/features/student_panel/bindings/student_transactio
 import 'package:edex_365_getx/features/student_panel/view/solution_and_claim_chat_view.dart';
 import 'package:edex_365_getx/features/student_panel/view/student_problem_list_view.dart';
 import 'package:edex_365_getx/features/student_panel/view/transaction_history_view.dart';
+import 'package:edex_365_getx/features/teacher_panel/bindings/teacher_skill_management_binding.dart';
 import 'package:edex_365_getx/features/teacher_panel/bindings/teacher_transaction_history_binding.dart';
+import 'package:edex_365_getx/features/teacher_panel/view/teacher_skill_management_view.dart';
 import 'package:get/get.dart';
 import 'app_routes.dart';
 
@@ -61,7 +63,7 @@ class AppPages {
         final userId = Get.parameters['userId'] ?? '';
         return TransactionHistoryView(userId: userId);
       },
-      binding: TransactionHistoryBinding(), // Reuse SharedBinding if applicable
+      binding: TransactionHistoryBinding(),
     ),
     GetPage(
       name: AppRoutes.studentProblemAll,
@@ -77,10 +79,21 @@ class AppPages {
       },
       bindings: [
         SolutionAndClaimChatBinding(),
-        SharedBinding(), // <-- Add this
+        SharedBinding(),
       ],
       transition: Transition.leftToRight,
       transitionDuration: const Duration(milliseconds: 400),
+    ),
+
+    // 📌 New: Teacher Skill Management Route
+    GetPage(
+      name: AppRoutes.teacherSkillManagement,
+      page: () {
+        return const TeacherSkillManagementView();
+      },
+      binding: TeacherSkillManagementBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 300),
     ),
   ];
 }
