@@ -13,6 +13,7 @@ import 'package:edex_365_getx/features/student_panel/bindings/student_transactio
 import 'package:edex_365_getx/features/student_panel/view/solution_and_claim_chat_view.dart';
 import 'package:edex_365_getx/features/student_panel/view/student_problem_list_view.dart';
 import 'package:edex_365_getx/features/student_panel/view/transaction_history_view.dart';
+import 'package:edex_365_getx/features/teacher_panel/bindings/teacher_transaction_history_binding.dart';
 import 'package:get/get.dart';
 import 'app_routes.dart';
 
@@ -44,7 +45,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.teacherHome,
       page: () => const TeacherHomeScreen(),
-      binding: AuthBinding(),
+      bindings: [
+        AuthBinding(),
+        TeacherTransactionHistoryBinding(),
+      ],
     ),
     GetPage(
       name: AppRoutes.settings,

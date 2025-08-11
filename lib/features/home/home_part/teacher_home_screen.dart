@@ -1,6 +1,7 @@
 import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/shared_panel/view/settings_content.dart';
 import 'package:edex_365_getx/features/teacher_panel/view/teacher_problem_view.dart';
+import 'package:edex_365_getx/features/teacher_panel/view/teacher_transaction_history_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -34,7 +35,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
 
     final List<Widget> pages = [
      const TeacherProblemView(),
-      const Text('Wallet'),
+      TeacherTransactionHistoryView(userId: authController.userId.value),
       const SettingsContent(),
     ];
 
