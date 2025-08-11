@@ -203,6 +203,11 @@ class SettingsContent extends StatelessWidget {
                       );
                     },
                   ),
+                  Divider(
+                      height: 1,
+                      indent: 16,
+                      endIndent: 16,
+                      color: theme.dividerColor),
 
                   // 📌 New Skill Management Item
                   _buildSettingsItem(

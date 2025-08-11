@@ -4,6 +4,7 @@ import 'package:edex_365_getx/features/shared_panel/controller/shared_controller
 import 'package:edex_365_getx/features/teacher_panel/controller/teacher_problem_controller.dart';
 import 'package:edex_365_getx/features/teacher_panel/model/teacher_problem_get_model.dart';
 import 'package:edex_365_getx/features/teacher_panel/service/teacher_problem_service.dart';
+import 'package:edex_365_getx/features/teacher_panel/view/teacher_problem_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -190,13 +191,18 @@ class _TeacherProblemViewState extends State<TeacherProblemView> {
           mainAxisSpacing: 12,
           childAspectRatio: 0.9,
           children: [
-            _buildStatItem(
+            _buildStatItem( 
               theme: theme,
               title: "Total",
               value: total.toString(),
               icon: Icons.assignment,
               color: theme.colorScheme.primary,
               progress: 1.0,
+              onTap: () => Get.to(() => const TeacherProblemList(),
+              transition: Transition.rightToLeft,
+              duration: const Duration(milliseconds: 400),
+            ),
+            
             ),
             _buildStatItem(
               theme: theme,
