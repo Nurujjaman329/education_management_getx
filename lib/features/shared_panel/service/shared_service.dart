@@ -167,21 +167,26 @@ class SharedService {
 
   // ------------------------ Problem & Claim ------------------------
 
-  Future<ProblemDetailsResponseModel> getProblemDetails(String subId) async {
-    try {
-      final response = await client.get('/api/ProblemsPost/s/ProblemDetails/$subId');
+Future<ProblemDetailsResponseModel> getProblemDetails(String subId) async {
+  try {
+    final response = await client.get('/api/ProblemsPost/s/ProblemDetails/$subId');
 
-      if (response.statusCode == 200 && response.data != null) {
-        return ProblemDetailsResponseModel.fromJson(
-          response.data as Map<String, dynamic>,
-        );
-      } else {
-        throw InputException("Failed to fetch data.");
-      }
-    } catch (error) {
+    log("GET ProblemDetails URL -> /api/ProblemsPost/s/ProblemDetails/$subId");
+    log("Response status -> ${response.statusCode}");
+    log("Response body -> ${response.data}");
+
+    if (response.statusCode == 200 && response.data != null) {
+      return ProblemDetailsResponseModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } else {
       throw InputException("Failed to fetch data.");
     }
+  } catch (error) {
+    log('GetProblemDetails Error: $error');
+    throw InputException("Failed to fetch data.");
   }
+}
 
   Future<String> claimMessage(
     String text,
@@ -262,41 +267,42 @@ class SharedService {
   }
 
 
-    Future<String> postMessage({
-    required String text,
-    required String userId,
-    required String problemPostId,
-    File? voiceFile,
-  }) async {
-    try {
-      final encodedText = Uri.encodeComponent(text);
-      final url = '/api/Communication/s/SaveMessage?Text=$encodedText&userId=$userId&problempostId=$problemPostId';
+Future<String> postMessage({
+  required String text,
+  required String userId,
+  required String problemPostId,
+  File? voiceFile,
+}) async {
+  try {
+    final encodedText = Uri.encodeComponent(text);
+    final url = '/api/Communication/s/SaveMessage?Text=$encodedText&userId=$userId&problempostId=$problemPostId';
 
-      final formData = FormData();
+    final formData = FormData();
 
-      if (voiceFile != null) {
-        final fileName = voiceFile.path.split('/').last;
-        formData.files.add(MapEntry(
-          'voiceUrl',
-          await MultipartFile.fromFile(voiceFile.path, filename: fileName),
-        ));
-      }
-
-      final response = await client.post(
-        url,
-        data: formData,
-        options: Options(contentType: 'multipart/form-data'),
-      );
-
-      log("Final URL -> ${response.realUri}");
-      log("Response body -> ${response.data}");
-
-      final data = response.data as Map<String, dynamic>;
-      return data['message'] ?? 'No message returned';
-    } catch (error) {
-      log('SendMessage Error: $error');
-      throw InputException("Failed to send message");
+    if (voiceFile != null) {
+      final fileName = voiceFile.path.split('/').last;
+      formData.files.add(MapEntry(
+        'voiceUrl',
+        await MultipartFile.fromFile(voiceFile.path, filename: fileName),
+      ));
     }
+
+    final response = await client.post(
+      url,
+      data: formData,
+      options: Options(contentType: 'multipart/form-data'),
+    );
+
+    log("POST Message URL -> $url");
+    log("Response status -> ${response.statusCode}");
+    log("Response body -> ${response.data}");
+
+    final data = response.data as Map<String, dynamic>;
+    return data['message'] ?? 'No message returned';
+  } catch (error) {
+    log('SendMessage Error: $error');
+    throw InputException("Failed to send message");
   }
+}
 }
 

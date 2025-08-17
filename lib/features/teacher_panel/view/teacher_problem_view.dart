@@ -4,7 +4,9 @@ import 'package:edex_365_getx/features/shared_panel/controller/shared_controller
 import 'package:edex_365_getx/features/teacher_panel/controller/teacher_problem_controller.dart';
 import 'package:edex_365_getx/features/teacher_panel/model/teacher_problem_get_model.dart';
 import 'package:edex_365_getx/features/teacher_panel/service/teacher_problem_service.dart';
+import 'package:edex_365_getx/features/teacher_panel/view/teacher_accepted_problem_list.dart';
 import 'package:edex_365_getx/features/teacher_panel/view/teacher_problem_list.dart';
+import 'package:edex_365_getx/features/teacher_panel/view/teacher_solved_problem_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -211,6 +213,10 @@ class _TeacherProblemViewState extends State<TeacherProblemView> {
               icon: Icons.check_circle,
               color: theme.colorScheme.secondary,
               progress: total > 0 ? accepted / total : 0.0,
+                 onTap: () => Get.to(() => const TeacherAcceptedProblemList(),
+              transition: Transition.rightToLeft,
+              duration: const Duration(milliseconds: 400),
+                 )
             ),
             _buildStatItem(
               theme: theme,
@@ -219,6 +225,10 @@ class _TeacherProblemViewState extends State<TeacherProblemView> {
               icon: Icons.done_all,
               color: theme.colorScheme.tertiary,
               progress: total > 0 ? solved / total : 0.0,
+                     onTap: () => Get.to(() => const TeacherSolvedProblemList(),
+              transition: Transition.rightToLeft,
+              duration: const Duration(milliseconds: 400),
+                 )
             ),
           ],
         ),

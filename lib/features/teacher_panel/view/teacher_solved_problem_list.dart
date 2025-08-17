@@ -1,14 +1,14 @@
 
 
+
 import 'package:edex_365_getx/core/widgets/custom_curved_appbar.dart';
 import 'package:edex_365_getx/features/student_panel/view/widget/problem_card.dart';
 import 'package:edex_365_getx/features/teacher_panel/controller/teacher_problem_controller.dart';
-import 'package:edex_365_getx/features/teacher_panel/view/teacher_all_problem_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class TeacherProblemList extends StatelessWidget {
-  const TeacherProblemList({super.key});
+class TeacherSolvedProblemList extends StatelessWidget {
+  const TeacherSolvedProblemList({super.key});
 
 @override
 Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ Widget build(BuildContext context) {
   return Scaffold(
     backgroundColor: theme.scaffoldBackgroundColor,
     appBar: const CustomCurvedAppBar(
-      title: "All Problem",
+      title: "Solved Problems",
       showBackButton: true,
     ),
     body: Obx(() {
@@ -42,7 +42,7 @@ Widget build(BuildContext context) {
         );
       }
 
-      if (controller.totalProblems.isEmpty) {
+      if (controller.solvedProblems.isEmpty) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -66,18 +66,18 @@ Widget build(BuildContext context) {
 
       return ListView.separated(
         padding: const EdgeInsets.all(16),
-        itemCount: controller.totalProblems.length,
+        itemCount: controller.solvedProblems.length,
         separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
-          final problem = controller.totalProblems[index];
+          final problem = controller.solvedProblems[index];
           return ProblemCard(
             problem: problem,
             onTap: () {
-              Get.to(
-                () => TeacherAllProblemDetailsView(problem: problem),
-                transition: Transition.leftToRight,
-                duration: const Duration(milliseconds: 400),
-              );
+              // Get.to(
+              //   () => StudentAllProblemDetailsView(problem: problem),
+              //   transition: Transition.leftToRight,
+              //   duration: const Duration(milliseconds: 400),
+              // );
             },
           );
         },

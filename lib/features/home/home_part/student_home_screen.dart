@@ -6,7 +6,6 @@ import 'package:edex_365_getx/features/student_panel/view/transaction_history_vi
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 class StudentHomeScreen extends StatefulWidget {
   const StudentHomeScreen({super.key});
 
@@ -66,15 +65,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
             )
           : null,
       body: SafeArea(child: pages[_selectedIndex]),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.scaffoldBackgroundColor,
-        onPressed: () {
-          authController.logout();
-        },
-        tooltip: 'Logout',
-        child: const Icon(Icons.logout),
-      ),
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -86,10 +77,10 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.edit_note), label: 'Post'),
           BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'Wallet'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), label: 'Settings'),
         ],
       ),
     );
   }
 }
-

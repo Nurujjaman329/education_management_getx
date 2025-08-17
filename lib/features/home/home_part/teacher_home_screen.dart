@@ -63,15 +63,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
             )
           : null,
       body: SafeArea(child: pages[_selectedIndex]),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.scaffoldBackgroundColor,
-        onPressed: () {
-          authController.logout();
-        },
-        tooltip: 'Logout',
-        child: const Icon(Icons.logout),
-      ),
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

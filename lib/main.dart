@@ -7,7 +7,6 @@ import 'package:edex_365_getx/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 void main() {
   Get.put(ConnectivityController(), permanent: true);
   runApp(const MyApp());
@@ -23,10 +22,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Education App',
       theme: AppThemes.lightTheme,
-       darkTheme: AppThemes.darkTheme,
-          themeMode: themeController.themeMode.value,
+      darkTheme: AppThemes.darkTheme,
+      themeMode: themeController.themeMode.value,
       initialRoute: AppRoutes.splash,
- 
       getPages: AppPages.pages,
       builder: (context, child) {
         return GlobalNetworkStatus(child: child ?? const SizedBox());

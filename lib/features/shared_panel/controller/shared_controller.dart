@@ -242,7 +242,7 @@ class SharedController extends GetxController {
 
 
     Future<void> sendPendingMessage({
-    required String text,
+    String? text,
     required String userId,
     required String problemPostId,
     File? voiceFile,
@@ -253,7 +253,7 @@ class SharedController extends GetxController {
       errorMessage.value = '';
 
       final message = await _service.postMessage(
-        text: text,
+        text: text!,
         userId: userId,
         problemPostId: problemPostId,
         voiceFile: voiceFile,
