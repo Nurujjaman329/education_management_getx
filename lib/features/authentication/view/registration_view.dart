@@ -114,7 +114,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                                 style: TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
-                                  color: theme.colorScheme.onBackground,
+                                  color: theme.colorScheme.onSurface,
                                 ),
                               ),
                               const SizedBox(height: 8),
