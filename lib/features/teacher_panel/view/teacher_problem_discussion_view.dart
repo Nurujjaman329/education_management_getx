@@ -449,11 +449,6 @@ Future<File?> _showVoiceRecordingDialog(BuildContext context) async {
   );
 }
 
-
-
-
-
-
 }
 
 class _MessageData {

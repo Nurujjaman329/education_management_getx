@@ -28,7 +28,6 @@ class TeacherAllProblemDetailsView extends StatelessWidget {
     // Check if user already has an accepted problem
     final hasExistingTask = controller.acceptedProblems.isNotEmpty;
 
-
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: const CustomCurvedAppBar(title: "Problem Details"),
@@ -81,13 +80,13 @@ class TeacherAllProblemDetailsView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            
+
             Text(
               'Topic: $topic',
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 16),
-            
+
             Text(
               'Description',
               style: theme.textTheme.titleMedium?.copyWith(
@@ -100,12 +99,13 @@ class TeacherAllProblemDetailsView extends StatelessWidget {
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 16),
-            
+
             // Date Info
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                color:
+                    theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -121,7 +121,7 @@ class TeacherAllProblemDetailsView extends StatelessWidget {
             ),
             const SizedBox(height: 32),
 
-       Obx(() {
+            Obx(() {
               // Check loading state
               if (controller.isLoading.value) {
                 return Center(
@@ -132,7 +132,8 @@ class TeacherAllProblemDetailsView extends StatelessWidget {
               }
 
               // Check if this specific problem is already accepted
-              final isThisProblemAccepted = controller.acceptedProblems.any((p) => p.id == postId);
+              final isThisProblemAccepted =
+                  controller.acceptedProblems.any((p) => p.id == postId);
 
               return Column(
                 children: [
@@ -147,7 +148,6 @@ class TeacherAllProblemDetailsView extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                     ),
-
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -157,45 +157,49 @@ class TeacherAllProblemDetailsView extends StatelessWidget {
                               try {
                                 await controller.acceptProblem(userId, postId);
                                 await controller.fetchAcceptedProblems(userId);
-                                
-                              Get.snackbar(
-  "Success", 
-  "Problem accepted successfully!",
-  snackPosition: SnackPosition.BOTTOM,
-  margin: const EdgeInsets.all(10),
-  borderRadius: 10,
-  backgroundColor: Get.theme.colorScheme.primary,
-  colorText: Colors.white,
-);
+
+                                Get.snackbar(
+                                  "Success",
+                                  "Problem accepted successfully!",
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  margin: const EdgeInsets.all(10),
+                                  borderRadius: 10,
+                                  backgroundColor:
+                                      Get.theme.colorScheme.primary,
+                                  colorText: Colors.white,
+                                );
 
                                 Get.back(result: true);
-                              }catch (e) {
-  if (e.toString().contains("Already Have a Task")) {
-    Get.dialog(
-      AlertDialog(
-        title: const Text("Task Warning"),
-        content: const Text("You already have a task assigned."),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
-  } else {
-    Get.snackbar(
-      "Error",
-      e.toString(),
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(10),
-      borderRadius: 10,
-      backgroundColor: Get.theme.colorScheme.error,
-      colorText: Colors.white,
-    );
-  }
-}
-
+                              } catch (e) {
+                                if (e
+                                    .toString()
+                                    .contains("Already Have a Task")) {
+                                  Get.dialog(
+                                    AlertDialog(
+                                      title: const Text("Task Warning"),
+                                      content: const Text(
+                                          "You already have a task assigned."),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Get.back(),
+                                          child: const Text("OK"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  Get.snackbar(
+                                    "Error",
+                                    e.toString(),
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    margin: const EdgeInsets.all(10),
+                                    borderRadius: 10,
+                                    backgroundColor:
+                                        Get.theme.colorScheme.error,
+                                    colorText: Colors.white,
+                                  );
+                                }
+                              }
                             },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -204,8 +208,8 @@ class TeacherAllProblemDetailsView extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        isThisProblemAccepted 
-                            ? 'Already Accepted' 
+                        isThisProblemAccepted
+                            ? 'Already Accepted'
                             : 'Accept Problem',
                       ),
                     ),
@@ -224,7 +228,7 @@ class TeacherAllProblemDetailsView extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(
-          "Cannot Accept Problem", 
+          "Cannot Accept Problem",
           style: TextStyle(color: theme.colorScheme.error),
         ),
         content: const Text(

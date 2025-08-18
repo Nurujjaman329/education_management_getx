@@ -4,6 +4,7 @@
 import 'package:edex_365_getx/core/widgets/custom_curved_appbar.dart';
 import 'package:edex_365_getx/features/student_panel/view/widget/problem_card.dart';
 import 'package:edex_365_getx/features/teacher_panel/controller/teacher_problem_controller.dart';
+import 'package:edex_365_getx/features/teacher_panel/view/teacher_solved_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -73,11 +74,11 @@ Widget build(BuildContext context) {
           return ProblemCard(
             problem: problem,
             onTap: () {
-              // Get.to(
-              //   () => StudentAllProblemDetailsView(problem: problem),
-              //   transition: Transition.leftToRight,
-              //   duration: const Duration(milliseconds: 400),
-              // );
+              Get.to(
+                () => TeacherSolvedDetailsView(problemId: problem.id),
+                transition: Transition.leftToRight,
+                duration: const Duration(milliseconds: 400),
+              );
             },
           );
         },
