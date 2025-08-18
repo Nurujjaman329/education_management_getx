@@ -72,6 +72,11 @@ class _TeacherProblemViewState extends State<TeacherProblemView> {
           );
         }
 
+      // Show error message if there's one
+      if (problemController.errorMessage.value.isNotEmpty) {
+        return _buildBlockedState(theme);
+      }
+
         if (problemController.errorMessage.value.isNotEmpty) {
           return Center(
             child: Text(
@@ -101,6 +106,43 @@ class _TeacherProblemViewState extends State<TeacherProblemView> {
       }),
     );
   }
+
+Widget _buildBlockedState(ThemeData theme) {
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.block,
+            size: 60,
+            color: theme.colorScheme.error,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            "Access Restricted",
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: theme.colorScheme.error,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              problemController.errorMessage.value, // Show the actual error message
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium,
+            ),
+          ),
+          const SizedBox(height: 24),
+      
+        ],
+      ),
+    ),
+  );
+}
 
   Widget _buildWelcomeHeader(ThemeData theme) {
     return Obx(() {

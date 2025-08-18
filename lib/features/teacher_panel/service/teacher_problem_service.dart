@@ -9,32 +9,33 @@ import '../model/teacher_problem_get_model.dart';
 class TeacherProblemService {
   final Dio client = DioClient.getInstance();
 
-  Future<List<TeacherProblemGetModel>> getTeacherProblem(String userId) async {
-    final url = "/api/Teacher/s/AllProblems/$userId";
-    try {
-      log("🔹 API HIT: GET $url");
-      final response = await client.get(url);
-      log("✅ Response (${response.statusCode}): ${response.data}");
+Future<List<TeacherProblemGetModel>> getTeacherProblem(String userId) async {
+  final url = "/api/Teacher/s/AllProblems/$userId";
+  try {
+    log("🔹 API HIT: GET $url");
+    final response = await client.get(url);
+    log("✅ Response (${response.statusCode}): ${response.data}");
 
-      if (response.statusCode == 200) {
-        if (response.data is List) {
-          return (response.data as List)
-              .map((e) => TeacherProblemGetModel.fromJson(e))
-              .toList();
-        }
-        if (response.data is Map &&
-            (response.data as Map).containsKey('message')) {
-          throw InputException(response.data['message'].toString());
-        }
-        throw InputException("Unexpected response format");
+    if (response.statusCode == 200) {
+      if (response.data is List) {
+        return (response.data as List)
+            .map((e) => TeacherProblemGetModel.fromJson(e))
+            .toList();
       }
-      if (response.statusCode == 404) throw AuthException();
-      throw ServerException();
-    } catch (e) {
-      log("❌ Error getTeacherProblem: $e");
-      rethrow;
+      if (response.data is Map && 
+          (response.data as Map).containsKey('message')) {
+        final message = response.data['message'].toString();
+        throw InputException(message);
+      }
+      throw InputException("Unexpected response format");
     }
+    if (response.statusCode == 404) throw AuthException();
+    throw ServerException();
+  } catch (e) {
+    log("❌ Error getTeacherProblem: $e");
+    rethrow;
   }
+}
 
   Future<List<TeacherProblemGetModel>> postAcceptProblemTeacher(
       String userId, String postId) async {

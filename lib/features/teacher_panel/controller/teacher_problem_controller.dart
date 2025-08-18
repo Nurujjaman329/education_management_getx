@@ -1,3 +1,4 @@
+import 'package:edex_365_getx/core/error/exceptions.dart';
 import 'package:get/get.dart';
 import '../model/teacher_problem_get_model.dart';
 import '../service/teacher_problem_service.dart';
@@ -13,11 +14,21 @@ class TeacherProblemController extends GetxController {
 
   var isLoading = false.obs;
   var errorMessage = ''.obs;
+
+  var isBlocked = false.obs;
+  var blockMessage = ''.obs;
+  var unblockTime = ''.obs;
 //** */
+
+
   Future<void> fetchTeacherProblems(String userId) async {
     try {
       isLoading(true);
+      errorMessage.value = ''; // Clear previous error
       totalProblems.value = await service.getTeacherProblem(userId);
+    } on InputException catch (e) {
+      // This will properly display the exception message
+      errorMessage.value = e.toString().replaceFirst('InputException: ', '');
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {

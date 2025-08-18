@@ -4,7 +4,6 @@ import 'package:edex_365_getx/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import '../../../core/config/app_colors.dart';
 
 
 class RegistrationView extends StatefulWidget {
@@ -46,6 +45,7 @@ class _RegistrationViewState extends State<RegistrationView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: Obx(() {
@@ -59,8 +59,8 @@ class _RegistrationViewState extends State<RegistrationView> {
                     begin: Alignment.topRight,
                     end: Alignment.bottomLeft,
                     colors: [
-                      AppColors.background.withOpacity(0.05),
-                      AppColors.background.withOpacity(0.8),
+                      theme.colorScheme.surface.withOpacity(0.05),
+                      theme.colorScheme.surface.withOpacity(0.8),
                     ],
                   ),
                 ),
@@ -75,7 +75,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: theme.colorScheme.primary.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -87,7 +87,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
-                  color: AppColors.secondary.withOpacity(0.1),
+                  color: theme.colorScheme.secondary.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -108,32 +108,21 @@ class _RegistrationViewState extends State<RegistrationView> {
                         Center(
                           child: Column(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withOpacity(0.1),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.asset(
-                                  'assets/images/edu_logo.png',
-                                  height: 50,
-                                ),
-                              ),
                               const SizedBox(height: 16),
-                              const Text(
+                              Text(
                                 'Create Account',
                                 style: TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: theme.colorScheme.onBackground,
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              const Text(
+                              Text(
                                 'Join our learning community',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: AppColors.textSecondary,
+                                  color: theme.textTheme.bodyMedium?.color,
                                 ),
                               ),
                             ],
@@ -142,12 +131,13 @@ class _RegistrationViewState extends State<RegistrationView> {
                         const SizedBox(height: 32),
                         
                         // Personal Info Section with improved cards
-                        _buildSectionHeader('Personal Information', Icons.person),
+                        _buildSectionHeader('Personal Information', Icons.person, theme),
                         _buildTextFieldCard(
                           'Full Name',
                           controller.nameController,
                           icon: Icons.person_outline,
                           validator: (value) => value?.isEmpty ?? true ? 'Please enter your name' : null,
+                          theme: theme,
                         ),
                         _buildTextFieldCard(
                           'Mobile Number',
@@ -159,6 +149,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                             if (value!.length != 10) return 'Mobile number must be 10 digits';
                             return null;
                           },
+                          theme: theme,
                         ),
                         _buildTextFieldCard(
                           'Email Address',
@@ -170,6 +161,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                             if (!value!.contains('@')) return 'Please enter a valid email';
                             return null;
                           },
+                          theme: theme,
                         ),
                         _buildTextFieldCard(
                           'Password',
@@ -181,24 +173,26 @@ class _RegistrationViewState extends State<RegistrationView> {
                             if (value!.length < 6) return 'Password must be at least 6 characters';
                             return null;
                           },
+                          theme: theme,
                         ),
-                        _buildDOBField(),
+                        _buildDOBField(theme),
                         const SizedBox(height: 24),
                         
                         // Role Selection (Single Select) moved up
-                        _buildSectionHeader('Select Your Role', Icons.school),
-                        _buildRoleSelection(),
+                        _buildSectionHeader('Select Your Role', Icons.school, theme),
+                        _buildRoleSelection(theme),
                         const SizedBox(height: 24),
                         
                         // Only show documents section if teacher is selected
                         if (isTeacher) ...[
-                          _buildSectionHeader('Professional Documents', Icons.folder),
+                          _buildSectionHeader('Professional Documents', Icons.folder, theme),
                           _buildFilePickerCard(
                             label: 'Profile Photo',
                             file: controller.image.value,
                             onTap: controller.pickImage,
                             isRequired: true,
                             icon: Icons.camera_alt,
+                            theme: theme,
                           ),
                           _buildFilePickerCard(
                             label: 'CV (Required for Teachers)',
@@ -206,6 +200,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                             onTap: controller.pickCV,
                             isRequired: true,
                             icon: Icons.description,
+                            theme: theme,
                           ),
                           _buildFilePickerCard(
                             label: 'Academic Certificates',
@@ -213,29 +208,31 @@ class _RegistrationViewState extends State<RegistrationView> {
                             onTap: controller.pickAcademicImage,
                             isRequired: true,
                             icon: Icons.school,
+                            theme: theme,
                           ),
                           const SizedBox(height: 24),
                         ] else ...[
                           // For students, only show profile photo
-                          _buildSectionHeader('Profile Photo', Icons.camera_alt),
+                          _buildSectionHeader('Profile Photo', Icons.camera_alt, theme),
                           _buildFilePickerCard(
                             label: 'Profile Photo',
                             file: controller.image.value,
                             onTap: controller.pickImage,
                             isRequired: true,
                             icon: Icons.camera_alt,
+                            theme: theme,
                           ),
                           const SizedBox(height: 24),
                         ],
                         
                         // Subjects Section
-                        _buildSectionHeader('Subjects of Interest', Icons.subject),
-                        _buildSubjects(),
+                        _buildSectionHeader('Subjects of Interest', Icons.subject, theme),
+                        _buildSubjects(theme),
                         const SizedBox(height: 30),
                         
                         // Submit Button with improved design
                         controller.isLoading.value
-                            ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                            ? Center(child: CircularProgressIndicator(color: theme.colorScheme.primary))
                             : SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
@@ -246,8 +243,8 @@ class _RegistrationViewState extends State<RegistrationView> {
                                           'Profile Image Required',
                                           'Please upload your profile photo',
                                           snackPosition: SnackPosition.BOTTOM,
-                                          backgroundColor: AppColors.error,
-                                          colorText: Colors.white,
+                                          backgroundColor: theme.colorScheme.error,
+                                          colorText: theme.colorScheme.onError,
                                         );
                                         return;
                                       }
@@ -256,8 +253,8 @@ class _RegistrationViewState extends State<RegistrationView> {
                                           'CV Required',
                                           'Please upload your CV',
                                           snackPosition: SnackPosition.BOTTOM,
-                                          backgroundColor: AppColors.error,
-                                          colorText: Colors.white,
+                                          backgroundColor: theme.colorScheme.error,
+                                          colorText: theme.colorScheme.onError,
                                         );
                                         return;
                                       }
@@ -266,8 +263,8 @@ class _RegistrationViewState extends State<RegistrationView> {
                                           'Role Required',
                                           'Please select your role',
                                           snackPosition: SnackPosition.BOTTOM,
-                                          backgroundColor: AppColors.error,
-                                          colorText: Colors.white,
+                                          backgroundColor: theme.colorScheme.error,
+                                          colorText: theme.colorScheme.onError,
                                         );
                                         return;
                                       }
@@ -275,18 +272,18 @@ class _RegistrationViewState extends State<RegistrationView> {
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.primary,
+                                    backgroundColor: theme.colorScheme.primary,
                                     padding: const EdgeInsets.symmetric(vertical: 18),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     elevation: 2,
-                                    shadowColor: AppColors.primary.withOpacity(0.3),
+                                    shadowColor: theme.colorScheme.primary.withOpacity(0.3),
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     "Create Account",
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: theme.colorScheme.onPrimary,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -301,14 +298,14 @@ class _RegistrationViewState extends State<RegistrationView> {
                             width: double.infinity,
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: AppColors.error.withOpacity(0.1),
+                              color: theme.colorScheme.error.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               controller.errorMessage.value,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: AppColors.error,
+                              style: TextStyle(
+                                color: theme.colorScheme.error,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -322,14 +319,14 @@ class _RegistrationViewState extends State<RegistrationView> {
                             child: Container(
                               padding: const EdgeInsets.all(12),
                               child: RichText(
-                                text: const TextSpan(
+                                text: TextSpan(
                                   text: "Already have an account? ",
-                                  style: TextStyle(color: AppColors.textSecondary),
+                                  style: TextStyle(color: theme.textTheme.bodyMedium?.color),
                                   children: [
                                     TextSpan(
                                       text: "Login",
                                       style: TextStyle(
-                                        color: AppColors.primary,
+                                        color: theme.colorScheme.primary,
                                         fontWeight: FontWeight.bold,
                                         decoration: TextDecoration.underline,
                                       ),
@@ -353,19 +350,19 @@ class _RegistrationViewState extends State<RegistrationView> {
     );
   }
 
-  Widget _buildSectionHeader(String title, IconData icon) {
+  Widget _buildSectionHeader(String title, IconData icon, ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: AppColors.primary),
+          Icon(icon, size: 20, color: theme.colorScheme.primary),
           const SizedBox(width: 8),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppColors.primary,
+              color: theme.colorScheme.primary,
             ),
           ),
         ],
@@ -380,6 +377,7 @@ class _RegistrationViewState extends State<RegistrationView> {
     TextInputType keyboard = TextInputType.text,
     bool isObscure = false,
     String? Function(String?)? validator,
+    required ThemeData theme,
   }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -387,7 +385,7 @@ class _RegistrationViewState extends State<RegistrationView> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: AppColors.divider.withOpacity(0.3),
+          color: theme.dividerColor.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -397,19 +395,19 @@ class _RegistrationViewState extends State<RegistrationView> {
           controller: controller,
           obscureText: isObscure && !this.controller.showPassword.value,
           keyboardType: keyboard,
-          style: const TextStyle(color: AppColors.textPrimary),
+          style: TextStyle(color: theme.textTheme.bodyLarge?.color),
           decoration: InputDecoration(
             labelText: label,
-            labelStyle: const TextStyle(color: AppColors.textSecondary),
+            labelStyle: TextStyle(color: theme.textTheme.bodyMedium?.color),
             border: InputBorder.none,
-            prefixIcon: icon != null ? Icon(icon, color: AppColors.primary) : null,
+            prefixIcon: icon != null ? Icon(icon, color: theme.colorScheme.primary) : null,
             suffixIcon: isObscure
                 ? Obx(() => IconButton(
                       icon: Icon(
                         this.controller.showPassword.value
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color: AppColors.textSecondary,
+                        color: theme.textTheme.bodyMedium?.color,
                       ),
                       onPressed: () => this.controller.showPassword.toggle(),
                     ))
@@ -427,6 +425,7 @@ class _RegistrationViewState extends State<RegistrationView> {
     required VoidCallback onTap,
     required bool isRequired,
     required IconData icon,
+    required ThemeData theme,
   }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -434,7 +433,7 @@ class _RegistrationViewState extends State<RegistrationView> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: AppColors.divider.withOpacity(0.3),
+          color: theme.dividerColor.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -448,22 +447,22 @@ class _RegistrationViewState extends State<RegistrationView> {
             children: [
               Row(
                 children: [
-                  Icon(icon, size: 20, color: AppColors.primary),
+                  Icon(icon, size: 20, color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
                     label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      color: AppColors.textPrimary,
+                      color: theme.textTheme.bodyLarge?.color,
                     ),
                   ),
                   if (isRequired) 
-                    const Padding(
-                      padding: EdgeInsets.only(left: 4),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
                       child: Text(
                         '*',
                         style: TextStyle(
-                          color: Colors.red,
+                          color: theme.colorScheme.error,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -474,7 +473,7 @@ class _RegistrationViewState extends State<RegistrationView> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: theme.cardColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -486,13 +485,13 @@ class _RegistrationViewState extends State<RegistrationView> {
                             : 'Tap to select file',
                         style: TextStyle(
                           color: file != null 
-                              ? AppColors.textPrimary 
-                              : AppColors.textSecondary,
+                              ? theme.textTheme.bodyLarge?.color 
+                              : theme.textTheme.bodyMedium?.color,
                         ),
                       ),
                     ),
                     if (file != null) 
-                      const Icon(Icons.check_circle, color: AppColors.success),
+                      Icon(Icons.check_circle, color: theme.colorScheme.primary),
                   ],
                 ),
               ),
@@ -503,14 +502,14 @@ class _RegistrationViewState extends State<RegistrationView> {
     );
   }
 
-  Widget _buildDOBField() {
+  Widget _buildDOBField(ThemeData theme) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: AppColors.divider.withOpacity(0.3),
+          color: theme.dividerColor.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -521,7 +520,7 @@ class _RegistrationViewState extends State<RegistrationView> {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              const Icon(Icons.calendar_today, color: AppColors.primary),
+              Icon(Icons.calendar_today, color: theme.colorScheme.primary),
               const SizedBox(width: 16),
               Obx(() => Text(
                     controller.dob.value != null
@@ -529,8 +528,8 @@ class _RegistrationViewState extends State<RegistrationView> {
                         : 'Select Date of Birth',
                     style: TextStyle(
                       color: controller.dob.value != null 
-                          ? AppColors.textPrimary 
-                          : AppColors.textSecondary,
+                          ? theme.textTheme.bodyLarge?.color 
+                          : theme.textTheme.bodyMedium?.color,
                     ),
                   )),
             ],
@@ -540,7 +539,7 @@ class _RegistrationViewState extends State<RegistrationView> {
     );
   }
 
-  Widget _buildSubjects() {
+  Widget _buildSubjects(ThemeData theme) {
     return Obx(() {
       final subjects = controller.subjectController.subjectList;
       final selected = controller.subjectController.selectedSubjectIds;
@@ -560,21 +559,21 @@ class _RegistrationViewState extends State<RegistrationView> {
                 controller.subjectController.selectedSubjectIds.remove(subject.id);
               }
             },
-            selectedColor: AppColors.primary.withOpacity(0.2),
-            backgroundColor: AppColors.surface,
+            selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+            backgroundColor: theme.cardColor,
             labelStyle: TextStyle(
-              color: isSelected ? AppColors.primary : AppColors.textPrimary,
+              color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyLarge?.color,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
               side: BorderSide(
                 color: isSelected 
-                    ? AppColors.primary 
-                    : AppColors.divider,
+                    ? theme.colorScheme.primary 
+                    : theme.dividerColor,
               ),
             ),
-            checkmarkColor: AppColors.primary,
+            checkmarkColor: theme.colorScheme.primary,
             showCheckmark: true,
           );
         }).toList(),
@@ -582,7 +581,7 @@ class _RegistrationViewState extends State<RegistrationView> {
     });
   }
 
-  Widget _buildRoleSelection() {
+  Widget _buildRoleSelection(ThemeData theme) {
     return Obx(() {
       final roles = controller.roleController.userRoleList;
       
@@ -604,13 +603,13 @@ class _RegistrationViewState extends State<RegistrationView> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: isSelected 
-                      ? AppColors.primary.withOpacity(0.1) 
-                      : AppColors.surface,
+                      ? theme.colorScheme.primary.withOpacity(0.1) 
+                      : theme.cardColor,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected 
-                        ? AppColors.primary 
-                        : AppColors.divider,
+                        ? theme.colorScheme.primary 
+                        : theme.dividerColor,
                     width: 1.5,
                   ),
                 ),
@@ -621,14 +620,14 @@ class _RegistrationViewState extends State<RegistrationView> {
                       height: 24,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isSelected ? AppColors.primary : Colors.transparent,
+                        color: isSelected ? theme.colorScheme.primary : Colors.transparent,
                         border: Border.all(
-                          color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                          color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color ?? Colors.grey,
                           width: 2,
                         ),
                       ),
                       child: isSelected
-                          ? const Icon(Icons.check, size: 14, color: Colors.white)
+                          ? Icon(Icons.check, size: 14, color: theme.colorScheme.onPrimary)
                           : null,
                     ),
                     const SizedBox(width: 16),
@@ -638,9 +637,9 @@ class _RegistrationViewState extends State<RegistrationView> {
                         children: [
                           Text(
                             role.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: theme.textTheme.bodyLarge?.color,
                               fontSize: 16,
                             ),
                           ),
@@ -648,8 +647,8 @@ class _RegistrationViewState extends State<RegistrationView> {
                           const SizedBox(height: 4),
                           Text(
                             role.name,
-                            style: const TextStyle(
-                              color: AppColors.textSecondary,
+                            style: TextStyle(
+                              color: theme.textTheme.bodyMedium?.color,
                               fontSize: 12,
                             ),
                           ),
@@ -661,7 +660,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                       role.name.toLowerCase().contains('teacher')
                           ? Icons.school
                           : Icons.school_outlined,
-                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                      color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color,
                     ),
                   ],
                 ),
