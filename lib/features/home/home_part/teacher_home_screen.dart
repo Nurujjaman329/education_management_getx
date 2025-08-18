@@ -13,7 +13,7 @@ class TeacherHomeScreen extends StatefulWidget {
 }
 
 class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
-  final authController = Get.find<AuthController>();
+  
   int _selectedIndex = 0;
 
   final List<String> _titles = [
@@ -32,7 +32,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context); // Or use context.theme from GetX
-
+    final authController = Get.find<AuthController>();
     final List<Widget> pages = [
      const TeacherProblemView(),
       TeacherTransactionHistoryView(userId: authController.userId.value),

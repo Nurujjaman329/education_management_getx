@@ -1,3 +1,4 @@
+import 'package:edex_365_getx/features/authentication/controller/auth_controller.dart';
 import 'package:edex_365_getx/features/teacher_panel/controller/teacher_transaction_history_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,6 +27,7 @@ class _TeacherTransactionHistoryViewState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    Get.put(AuthController());
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: Obx(() {
