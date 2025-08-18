@@ -46,13 +46,15 @@ dependencies:
   dio: ^5.3.3
   # Local cache
   shared_preferences: ^2.5.3
-
-
+  syncfusion_flutter_charts: ^27.1.57
+  file_picker: ^10.2.1
 
 
   intl: ^0.19.0
   image_picker: ^1.1.2
-  flutter_secure_storage: ^9.2.4
+  just_audio: ^0.9.40
+  record: ^6.0.0
+  path_provider: ^2.1.5
 
 
   

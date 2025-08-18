@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 
 class CustomFormField extends FormField<String> {
   CustomFormField({
-    Key? key,
-    FormFieldSetter<String>? onSaved,
-    FormFieldValidator<String>? validator,
+    super.key,
+    super.onSaved,
+    super.validator,
     String? initialValue,
     TextEditingController? controller,
     FocusNode? focusNode,
@@ -44,9 +44,6 @@ class CustomFormField extends FormField<String> {
     bool enableInteractiveSelection = true,
     TextCapitalization textCapitalization = TextCapitalization.none,
   }) : super(
-          key: key,
-          onSaved: onSaved,
-          validator: validator,
           initialValue: controller == null ? initialValue : null,
           builder: (FormFieldState<String> state) {
             final theme = Theme.of(state.context);

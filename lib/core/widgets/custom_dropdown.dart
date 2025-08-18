@@ -3,7 +3,7 @@ import 'package:edex_365_getx/core/config/app_colors.dart';
 
 class CustomDropdown<T> extends FormField<T> {
   CustomDropdown({
-    Key? key,
+    super.key,
     required String labelText,
     required List<CustomDropdownItem<T>> items,
     required void Function(T value) onChanged,
@@ -13,10 +13,8 @@ class CustomDropdown<T> extends FormField<T> {
     String? hintText,
     double borderRadius = 12.0,
     EdgeInsetsGeometry? padding,
-    String? Function(T?)? validator,
+    super.validator,
   }) : super(
-          key: key,
-          validator: validator,
           builder: (FormFieldState<T> state) {
             final theme = Theme.of(state.context);
             final isError = state.hasError;
@@ -87,7 +85,7 @@ class _CustomDropdownInner<T> extends StatefulWidget {
   final void Function(T value) onChanged;
 
   const _CustomDropdownInner({
-    Key? key,
+    super.key,
     required this.labelText,
     required this.items,
     required this.onChanged,
@@ -98,7 +96,7 @@ class _CustomDropdownInner<T> extends StatefulWidget {
     this.borderRadius = 12.0,
     this.padding,
     this.isError = false,
-  }) : super(key: key);
+  });
 
   @override
   State<_CustomDropdownInner<T>> createState() =>
